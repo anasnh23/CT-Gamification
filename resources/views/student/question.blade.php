@@ -7,7 +7,7 @@
     <title>Challenge Question</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="icon" type="image/png" href="{{ asset('storage/icons/game.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('favicon-ctg.png') }}">
 </head>
 
 <body class="min-h-screen bg-gradient-to-br from-[#240812] via-[#451127] to-[#66203d] text-white">

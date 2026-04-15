@@ -12,19 +12,27 @@
             @csrf
 
             <div>
-                <x-input-label for="email" :value="__('Email')" style="color:#334155;font-weight:700;" />
-                <x-text-input id="email" class="block mt-2 w-full"
-                    style="border-radius:16px;border:1px solid #f0b6c9;padding:14px 16px;color:#1f2937;background:#fff;"
-                    type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                <label for="email" style="display:block;color:#334155;font-weight:700;margin-bottom:8px;">Email</label>
+                <input id="email"
+                    type="email"
+                    name="email"
+                    value="{{ old('email') }}"
+                    required
+                    autofocus
+                    autocomplete="username"
+                    style="display:block;width:100%;border-radius:16px;border:1px solid #f0b6c9;padding:14px 16px;color:#1f2937;background:#fff;outline:none;box-sizing:border-box;">
                 <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
 
             <div>
-                <x-input-label for="password" :value="__('Password')" style="color:#334155;font-weight:700;" />
-                <div style="position:relative; margin-top:8px;">
-                    <x-text-input id="password" class="block w-full"
-                        style="border-radius:16px;border:1px solid #f0b6c9;padding:14px 52px 14px 16px;color:#1f2937;background:#fff;"
-                        type="password" name="password" required autocomplete="current-password" />
+                <label for="password" style="display:block;color:#334155;font-weight:700;margin-bottom:8px;">Password</label>
+                <div style="position:relative;">
+                    <input id="password"
+                        type="password"
+                        name="password"
+                        required
+                        autocomplete="current-password"
+                        style="display:block;width:100%;border-radius:16px;border:1px solid #f0b6c9;padding:14px 76px 14px 16px;color:#1f2937;background:#fff;outline:none;box-sizing:border-box;">
                     <button type="button" id="togglePassword"
                         style="position:absolute; top:50%; right:14px; transform:translateY(-50%); border:0; background:transparent; color:#9f1d4f; font-size:13px; font-weight:700; cursor:pointer;">
                         Lihat
@@ -43,10 +51,10 @@
                     Buat akun
                 </a>
 
-                <x-primary-button
-                    style="border-radius:16px;padding:14px 22px;background:linear-gradient(90deg,#c0265f,#ec4899);border:0;box-shadow:0 16px 30px rgba(190,24,93,.22);">
+                <button type="submit"
+                    style="display:inline-flex;align-items:center;justify-content:center;border-radius:16px;padding:14px 22px;background:linear-gradient(90deg,#c0265f,#ec4899);border:0;box-shadow:0 16px 30px rgba(190,24,93,.22);color:#111827;font-weight:700;cursor:pointer;">
                     {{ __('Log in') }}
-                </x-primary-button>
+                </button>
             </div>
         </form>
     </div>

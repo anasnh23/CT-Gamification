@@ -10,7 +10,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/png" href="{{ asset('storage/icons/game.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('favicon-ctg.png') }}">
 
     <!-- Custom CSS -->
     <style>
@@ -98,7 +98,7 @@
             class="w-full max-w-md rounded-[2rem] border border-pink-200/20 bg-white/5 backdrop-blur-md px-8 py-10 text-center shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
             <div
                 class="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-[1.4rem] border border-pink-200/20 bg-white/10 shadow-[0_0_35px_rgba(244,114,182,0.18)] loading-emblem">
-                <img src="{{ asset('storage/icons/game.png') }}" alt="Loading mission" class="h-10 w-10 object-contain">
+                <img src="{{ asset('favicon-ctg.png') }}" alt="Loading mission" class="h-10 w-10 object-contain">
             </div>
 
             <div class="mx-auto mb-6 flex w-fit items-center gap-3">

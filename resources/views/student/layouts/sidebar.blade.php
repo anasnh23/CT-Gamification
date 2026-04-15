@@ -4,7 +4,7 @@
     <div class="flex items-center justify-center md:justify-between px-3 md:px-6 py-5 border-b border-rose-300/25 shadow-md gap-3">
         <h2 id="sidebar-logo"
             class="text-2xl font-bold transition-all duration-300 tracking-wider flex items-center min-w-0">
-            <img src="{{ asset('storage/icons/game.png') }}" alt="Logo" class="w-10 h-10 shrink-0 md:mr-3">
+            <img src="{{ asset('favicon-ctg.png') }}" alt="Logo" class="w-10 h-10 shrink-0 md:mr-3">
             <span id="sidebar-title" class="sidebar-text">CTG</span>
         </h2>
 

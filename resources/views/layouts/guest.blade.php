@@ -10,7 +10,7 @@
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/png" href="{{ asset('storage/icons/game.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('favicon-ctg.png') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
@@ -204,7 +204,7 @@
                 <div class="guest-brand-inner">
                     <div>
                         <div class="guest-brand-badge">
-                            <img src="{{ asset('storage/icons/game.png') }}" alt="CTG" style="width:22px;height:22px;object-fit:contain;">
+                            <img src="{{ asset('favicon-ctg.png') }}" alt="CTG" style="width:22px;height:22px;object-fit:contain;">
                             CTG Platform
                         </div>
 

@@ -1,7 +1,7 @@
 <aside id="adminSidebar" class="admin-sidebar admin-scrollbar scrolled">
     <div class="compact-center compact-stack" style="padding:20px 16px 16px; border-bottom:1px solid rgba(255,228,236,.1); display:flex; align-items:center; justify-content:space-between; gap:12px;">
         <div class="compact-center" style="display:flex; align-items:center; gap:16px;">
-            <img src="{{ asset('storage/icons/game.png') }}" alt="CTG" class="sidebar-brand-admin" style="width:44px; height:44px; object-fit:contain;">
+            <img src="{{ asset('favicon-ctg.png') }}" alt="CTG" class="sidebar-brand-admin" style="width:44px; height:44px; object-fit:contain;">
             <div class="hide-when-collapsed">
                 <div style="font-size:18px; letter-spacing:.28em; text-transform:uppercase; color:rgba(255,236,242,.72);">Admin</div>
                 <div style="font-size:34px; font-weight:800; line-height:1; color:#fff;">CTG</div>

@@ -2,7 +2,7 @@
     <div>
         <div class="lecturer-sidebar-top">
             <a href="{{ route('lecturer.dashboard') }}" class="lecturer-brand">
-                <img src="{{ asset('storage/icons/game.png') }}" alt="Logo" class="lecturer-brand-logo">
+                <img src="{{ asset('favicon-ctg.png') }}" alt="Logo" class="lecturer-brand-logo">
                 <span class="lecturer-expand-only">CTG</span>
             </a>
 

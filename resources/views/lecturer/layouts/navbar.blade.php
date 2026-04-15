@@ -1,7 +1,7 @@
 <nav class="lecturer-navbar">
     <div class="lecturer-navbar-title">
         <div class="lecturer-navbar-logo-wrap">
-            <img src="{{ asset('storage/icons/game.png') }}" alt="Logo" class="lecturer-navbar-logo">
+            <img src="{{ asset('favicon-ctg.png') }}" alt="Logo" class="lecturer-navbar-logo">
         </div>
         <div>
             <p class="lecturer-navbar-kicker">Lecturer</p>

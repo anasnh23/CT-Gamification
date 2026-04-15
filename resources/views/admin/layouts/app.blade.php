@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Workspace</title>
     @vite('resources/css/app.css')
-    <link rel="icon" type="image/png" href="{{ asset('storage/icons/game.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('favicon-ctg.png') }}">
     <style>
         :root {
             --admin-shell: linear-gradient(135deg, #3f0a1c 0%, #5b1731 42%, #691b39 100%);

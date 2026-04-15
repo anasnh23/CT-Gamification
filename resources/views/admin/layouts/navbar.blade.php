@@ -2,7 +2,7 @@
     <div class="admin-surface" style="border-radius:34px; padding:22px 28px; display:flex; align-items:center; justify-content:space-between; gap:20px;">
         <div style="display:flex; align-items:center; gap:18px;">
             <div style="width:72px; height:72px; border-radius:26px; border:1px solid rgba(255,228,236,.16); background:rgba(255,255,255,.06); display:grid; place-items:center;">
-                <img src="{{ asset('storage/icons/game.png') }}" alt="CTG" style="width:40px; height:40px; object-fit:contain;">
+                <img src="{{ asset('favicon-ctg.png') }}" alt="CTG" style="width:40px; height:40px; object-fit:contain;">
             </div>
             <div>
                 <div style="font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:rgba(255,236,242,.72);">Admin Workspace</div>
