@@ -3,14 +3,14 @@
 @section('content')
     <div class="student-form-page">
         <section class="student-form-hero">
-            <p class="student-form-kicker">Tambah Mahasiswa</p>
-            <h1 class="student-form-title">Masukkan data mahasiswa baru</h1>
-            <p class="student-form-copy">Akun mahasiswa akan dibuat otomatis dengan password awal standar, lalu rank akan mengikuti jumlah EXP yang dimasukkan.</p>
+            <p class="student-form-kicker">Edit Mahasiswa</p>
+            <h1 class="student-form-title">Perbarui data mahasiswa</h1>
+            <p class="student-form-copy">Sesuaikan identitas mahasiswa dan progres akademiknya agar data pada dashboard pengajar tetap konsisten.</p>
         </section>
 
         @if ($errors->any())
             <div class="student-form-alert">
-                <strong>Data belum bisa disimpan.</strong>
+                <strong>Perubahan belum bisa disimpan.</strong>
                 <ul>
                     @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
@@ -19,53 +19,54 @@
             </div>
         @endif
 
-        <form action="{{ route('lecturer.students.store') }}" method="POST" class="student-form-card bg-white">
+        <form action="{{ route('lecturer.students.update', $student->id) }}" method="POST" class="student-form-card bg-white">
             @csrf
+            @method('PUT')
 
             <div class="student-form-grid two">
                 <div>
                     <label for="name" class="student-form-label">Nama</label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}" class="student-form-input" required>
+                    <input type="text" name="name" id="name" value="{{ old('name', $student->user->name) }}" class="student-form-input" required>
                 </div>
                 <div>
                     <label for="email" class="student-form-label">Email</label>
-                    <input type="email" name="email" id="email" value="{{ old('email') }}" class="student-form-input" required>
+                    <input type="email" name="email" id="email" value="{{ old('email', $student->user->email) }}" class="student-form-input" required>
                 </div>
             </div>
 
             <div class="student-form-grid three">
                 <div>
                     <label for="nim" class="student-form-label">NIM</label>
-                    <input type="text" name="nim" id="nim" value="{{ old('nim') }}" class="student-form-input" required>
+                    <input type="text" name="nim" id="nim" value="{{ old('nim', $student->nim) }}" class="student-form-input" required>
                 </div>
                 <div>
                     <label for="prodi" class="student-form-label">Program Studi</label>
-                    <input type="text" name="prodi" id="prodi" value="{{ old('prodi') }}" class="student-form-input">
+                    <input type="text" name="prodi" id="prodi" value="{{ old('prodi', $student->prodi) }}" class="student-form-input">
                 </div>
                 <div>
                     <label for="class" class="student-form-label">Kelas</label>
-                    <input type="text" name="class" id="class" value="{{ old('class') }}" class="student-form-input">
+                    <input type="text" name="class" id="class" value="{{ old('class', $student->class) }}" class="student-form-input">
                 </div>
             </div>
 
             <div class="student-form-grid two">
                 <div>
                     <label for="semester" class="student-form-label">Semester</label>
-                    <input type="number" name="semester" id="semester" value="{{ old('semester') }}" class="student-form-input">
+                    <input type="number" name="semester" id="semester" value="{{ old('semester', $student->semester) }}" class="student-form-input">
                 </div>
                 <div>
-                    <label for="exp" class="student-form-label">EXP Awal</label>
-                    <input type="number" name="exp" id="exp" value="{{ old('exp', 0) }}" class="student-form-input" required>
+                    <label for="exp" class="student-form-label">EXP Saat Ini</label>
+                    <input type="number" name="exp" id="exp" value="{{ old('exp', $student->exp) }}" class="student-form-input" required>
                 </div>
             </div>
 
             <div class="student-form-note">
-                Password awal mahasiswa akan dibuat otomatis menjadi <strong>password123</strong>. Mahasiswa dapat menggantinya setelah login.
+                Setelah disimpan, sistem akan menghitung ulang <strong>rank</strong> mahasiswa berdasarkan nilai EXP terbaru.
             </div>
 
             <div class="student-form-actions">
-                <a href="{{ route('lecturer.students.index') }}" class="student-form-btn neutral">Kembali</a>
-                <button type="submit" class="student-form-btn primary">Simpan Mahasiswa</button>
+                <a href="{{ route('lecturer.students.show', $student->id) }}" class="student-form-btn neutral">Kembali</a>
+                <button type="submit" class="student-form-btn primary">Simpan Perubahan</button>
             </div>
         </form>
     </div>

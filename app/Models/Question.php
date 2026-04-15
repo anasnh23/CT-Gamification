@@ -19,6 +19,8 @@ class Question extends Model
         'type',
         'description',
         'question_text',
+        'help_text',
+        'explanation_text',
         'question_image',
         'score',
         'exp',
@@ -31,6 +33,6 @@ class Question extends Model
 
     public function answers()
     {
-        return $this->hasMany(Answer::class);
+        return $this->hasMany(Answer::class)->orderBy('id');
     }
 }

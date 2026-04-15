@@ -1,193 +1,117 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg border border-gray-200">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800 flex items-center space-x-2">
-                ➕ <span>Add New User</span>
-            </h2>
-            <a href="{{ route('admin.users.index') }}"
-                class="bg-gray-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-600 transition duration-200">
-                ⬅️ Back to Users List
-            </a>
-        </div>
+    <div class="admin-form-page">
+        <section class="admin-form-hero admin-surface">
+            <p class="admin-form-kicker">Users</p>
+            <h1 class="admin-form-title">Buat akun baru dengan role yang sesuai</h1>
+        </section>
+
         @if ($errors->any())
-            <div class="mb-4 p-3 bg-red-100 text-red-700 rounded-lg shadow">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+            <div class="admin-form-alert">
+                <strong>Data belum bisa disimpan.</strong>
+                <ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
             </div>
         @endif
-        <!-- Form -->
-        <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data"
-            onsubmit="validateForm(event)">
+
+        <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data" class="admin-card-white admin-form-card">
             @csrf
+            <div class="admin-form-grid two">
+                <div><label>Nama</label><input type="text" name="name" value="{{ old('name') }}" required></div>
+                <div><label>Email</label><input type="email" name="email" value="{{ old('email') }}" required></div>
+            </div>
 
-            <!-- Name & Email -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="admin-form-grid two">
+                <div><label>Password</label><input type="password" name="password" id="password" required></div>
+                <div><label>Konfirmasi Password</label><input type="password" name="password_confirmation" id="password_confirmation" required></div>
+            </div>
+
+            <div class="admin-form-grid two">
                 <div>
-                    <label class="block text-gray-700 font-bold mb-2">👤 Name</label>
-                    <input type="text" name="name"
-                        class="w-full border-gray-300 rounded-md p-2 shadow-sm focus:ring focus:ring-blue-200" required>
+                    <label>Role</label>
+                    <select name="role" id="role" onchange="toggleStudentFields()" required>
+                        <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin</option>
+                        <option value="lecturer" {{ old('role') === 'lecturer' ? 'selected' : '' }}>Lecturer</option>
+                        <option value="student" {{ old('role') === 'student' ? 'selected' : '' }}>Student</option>
+                    </select>
                 </div>
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">📧 Email</label>
-                    <input type="email" name="email"
-                        class="w-full border-gray-300 rounded-md p-2 shadow-sm focus:ring focus:ring-blue-200" required>
+                <div><label>Foto Profil</label><input type="file" name="profile_photo" accept="image/*"></div>
+            </div>
+
+            <div id="studentFields" class="admin-form-student" style="display:none;">
+                <h2>Data Mahasiswa</h2>
+                <div class="admin-form-grid two">
+                    <div><label>NIM</label><input type="text" name="nim" value="{{ old('nim') }}"></div>
+                    <div><label>No. Telepon</label><input type="text" name="phone_number" value="{{ old('phone_number') }}"></div>
                 </div>
-            </div>
-
-            <!-- Profile Photo -->
-            <div class="mt-4">
-                <label class="block text-gray-700 font-bold mb-2">🖼️ Profile Photo</label>
-                <input type="file" name="profile_photo"
-                    class="w-full border-gray-300 rounded-md p-2 shadow-sm focus:ring focus:ring-blue-200">
-            </div>
-
-            <!-- Password & Confirm Password -->
-            <div class="grid grid-cols-2 gap-4">
-                <div class="relative">
-                    <label class="block text-gray-700 font-bold">Password</label>
-                    <input type="password" name="password" id="password" required
-                        class="w-full border-gray-300 rounded-md p-2 pr-10">
-                    <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer"
-                        onclick="togglePassword('password')">
-                        👁️
-                    </span>
-                </div>
-                <div class="relative">
-                    <label class="block text-gray-700 font-bold">Confirm Password</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" required
-                        class="w-full border-gray-300 rounded-md p-2 pr-10">
-                    <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer"
-                        onclick="togglePassword('password_confirmation')">👁️</span>
-                </div>
-            </div>
-            <div class="text-red-600 text-sm mt-1 hidden" id="password-warning">
-                ⚠️ Passwords do not match!
-            </div>
-
-            <!-- Role Selection -->
-            <div class="mt-4">
-                <label class="block text-gray-700 font-bold mb-2">🛠️ Role</label>
-                <select name="role" id="role"
-                    class="w-full border-gray-300 rounded-md p-2 shadow-sm focus:ring focus:ring-blue-200" required
-                    onchange="toggleStudentFields()">
-                    <option value="admin">Admin</option>
-                    <option value="lecturer">Lecturer</option>
-                    <option value="student">Student</option>
-                </select>
-            </div>
-
-            <!-- Student Fields (Hidden by Default) -->
-            <div id="student-fields" class="hidden mt-6 bg-gray-100 p-6 rounded-lg shadow-md">
-                <h3 class="text-lg font-bold text-gray-700 mb-4">🎓 Student Information</h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="admin-form-grid two">
+                    <div><label>Tanggal Lahir</label><input type="date" name="birth_date" value="{{ old('birth_date') }}"></div>
                     <div>
-                        <label class="block text-gray-700 font-bold mb-2">🆔 NIM</label>
-                        <input type="text" name="nim" class="w-full border-gray-300 rounded-md p-2 shadow-sm">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 font-bold mb-2">📍 Address</label>
-                        <input type="text" name="address" class="w-full border-gray-300 rounded-md p-2 shadow-sm">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div>
-                        <label class="block text-gray-700 font-bold mb-2">🎂 Birth Date</label>
-                        <input type="date" name="birth_date" class="w-full border-gray-300 rounded-md p-2 shadow-sm">
-                    </div>
-                    <div>
-                        <label class="block text-gray-700 font-bold mb-2">🕌 Religion</label>
-                        <select name="religion" class="w-full border-gray-300 rounded-md p-2 shadow-sm">
-                            <option value="Islam">Islam</option>
-                            <option value="Protestan">Protestan</option>
-                            <option value="Katolik">Katolik</option>
-                            <option value="Hindu">Hindu</option>
-                            <option value="Buddha">Buddha</option>
-                            <option value="Konghucu">Konghucu</option>
-                            <option value="Lainnya">Lainnya</option>
+                        <label>Agama</label>
+                        <select name="religion">
+                            @foreach (['Islam','Protestan','Katolik','Hindu','Buddha','Konghucu','Lainnya'] as $religion)
+                                <option value="{{ $religion }}" {{ old('religion') === $religion ? 'selected' : '' }}>{{ $religion }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div class="admin-form-grid two">
                     <div>
-                        <label class="block text-gray-700 font-bold mb-2">🧑 Gender</label>
-                        <select name="gender" class="w-full border-gray-300 rounded-md p-2 shadow-sm">
-                            <option value="Laki-laki">Laki-laki</option>
-                            <option value="Perempuan">Perempuan</option>
+                        <label>Jenis Kelamin</label>
+                        <select name="gender">
+                            <option value="Laki-laki" {{ old('gender') === 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="Perempuan" {{ old('gender') === 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-gray-700 font-bold mb-2">📞 Phone Number</label>
-                        <input type="text" name="phone_number" class="w-full border-gray-300 rounded-md p-2 shadow-sm">
-                    </div>
+                    <div><label>Alamat</label><input type="text" name="address" value="{{ old('address') }}"></div>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                <div class="admin-form-grid three">
                     <div>
-                        <label class="block text-gray-700 font-bold mb-2">🎓 Program</label>
-                        <select name="prodi" class="w-full border-gray-300 rounded-md p-2 shadow-sm">
-                            <option value="Sistem Informasi Bisnis">Sistem Informasi Bisnis</option>
-                            <option value="Teknik Informatika">Teknik Informatika</option>
+                        <label>Program Studi</label>
+                        <select name="prodi">
+                            <option value="Sistem Informasi Bisnis" {{ old('prodi') === 'Sistem Informasi Bisnis' ? 'selected' : '' }}>Sistem Informasi Bisnis</option>
+                            <option value="Teknik Informatika" {{ old('prodi') === 'Teknik Informatika' ? 'selected' : '' }}>Teknik Informatika</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-gray-700 font-bold mb-2">📆 Semester</label>
-                        <select name="semester" class="w-full border-gray-300 rounded-md p-2 shadow-sm">
-                            @for ($i = 1; $i <= 8; $i++)
-                                <option value="{{ $i }}">{{ $i }}</option>
-                            @endfor
-                        </select>
-                    </div>
-                </div>
-
-                <div class="mt-4">
-                    <label class="block text-gray-700 font-bold mb-2">🏫 Class</label>
-                    <input type="text" name="class" class="w-full border-gray-300 rounded-md p-2 shadow-sm">
+                    <div><label>Semester</label><input type="number" min="1" max="8" name="semester" value="{{ old('semester') }}"></div>
+                    <div><label>Kelas</label><input type="text" name="class" value="{{ old('class') }}"></div>
                 </div>
             </div>
 
-            <!-- Submit Button -->
-            <div class="mt-6 flex justify-end">
-                <button type="submit"
-                    class="bg-blue-600 text-white px-5 py-2 rounded-lg shadow-md hover:bg-blue-700 transition duration-200">
-                    ✅ Create User
-                </button>
+            <div class="admin-form-actions">
+                <a href="{{ route('admin.users.index') }}" class="btn-neutral">Kembali</a>
+                <button type="submit" class="btn-primary">Simpan User</button>
             </div>
         </form>
     </div>
 
+    <style>
+        .admin-form-page { max-width: 1040px; margin: 0 auto; }
+        .admin-form-hero { padding:28px; border-radius:30px; margin-bottom:24px; }
+        .admin-form-kicker { margin:0; font-size:12px; letter-spacing:.32em; text-transform:uppercase; color:rgba(255,236,242,.72); }
+        .admin-form-title { margin:12px 0 0; color:#fff; font-size:40px; }
+        .admin-form-copy { margin:14px 0 0; color:rgba(255,236,242,.75); line-height:1.8; }
+        .admin-form-alert { margin-bottom:16px; padding:16px 18px; border-radius:18px; background:rgba(254,226,226,.96); color:#991b1b; }
+        .admin-form-card { padding:24px; border-radius:30px; }
+        .admin-form-grid { display:grid; gap:20px; margin-bottom:20px; }
+        .admin-form-grid.two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .admin-form-grid.three { grid-template-columns:repeat(3,minmax(0,1fr)); }
+        .admin-form-card label { display:block; margin-bottom:10px; font-weight:700; color:#334155; }
+        .admin-form-card input, .admin-form-card select { width:100%; padding:14px 16px; border-radius:16px; border:1px solid #f0b6c9; background:#fff; color:#1f2937; }
+        .admin-form-student { margin-top:10px; padding:22px; border-radius:24px; background:#fff7fa; border:1px solid #f6d3e0; }
+        .admin-form-student h2 { margin:0 0 18px; color:#9f1d4f; }
+        .admin-form-actions { display:flex; justify-content:space-between; gap:14px; margin-top:24px; }
+        .btn-primary, .btn-neutral { display:inline-flex; align-items:center; justify-content:center; padding:14px 18px; border-radius:16px; text-decoration:none; font-weight:700; border:0; cursor:pointer; color:#fff; }
+        .btn-primary { background:var(--admin-accent); }
+        .btn-neutral { background:#64748b; }
+        @media (max-width:768px) { .admin-form-grid.two, .admin-form-grid.three { grid-template-columns:1fr; } .admin-form-actions { flex-direction:column; } .admin-form-title { font-size:32px; } }
+    </style>
+
     <script>
-        function validateForm(event) {
-            let password = document.getElementById('password').value;
-            let confirmPassword = document.getElementById('password_confirmation').value;
-            let warningMessage = document.getElementById('password-warning');
-
-            if (password !== confirmPassword) {
-                event.preventDefault(); // Mencegah form dikirim jika password tidak cocok
-                warningMessage.classList.remove('hidden');
-                return false;
-            } else {
-                warningMessage.classList.add('hidden');
-            }
-        }
-
         function toggleStudentFields() {
-            let role = document.getElementById("role").value;
-            let studentFields = document.getElementById("student-fields");
-            studentFields.style.display = role === "student" ? "block" : "none";
+            const role = document.getElementById('role').value;
+            document.getElementById('studentFields').style.display = role === 'student' ? 'block' : 'none';
         }
-
-        function togglePassword(id) {
-            let field = document.getElementById(id);
-            field.type = field.type === "password" ? "text" : "password";
-        }
+        toggleStudentFields();
     </script>
 @endsection

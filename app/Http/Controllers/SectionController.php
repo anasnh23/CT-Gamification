@@ -9,7 +9,7 @@ class SectionController extends Controller
 {
     public function index()
     {
-        $sections = Section::orderBy('order', 'asc')->paginate(10);
+        $sections = Section::withCount('challenges')->orderBy('order', 'asc')->paginate(10);
         return view('lecturer.sections.index', compact('sections'));
     }
 
@@ -27,10 +27,10 @@ class SectionController extends Controller
 
         Section::create([
             'order' => $request->order,
-            'name' => $request->name,
+            'name' => trim($request->name),
         ]);
 
-        return redirect()->route('lecturer.sections.index')->with('success', 'Section created successfully!');
+        return redirect()->route('lecturer.sections.index')->with('success', 'Section berhasil dibuat.');
     }
 
     public function edit(Section $section)
@@ -47,10 +47,10 @@ class SectionController extends Controller
 
         $section->update([
             'order' => $request->order,
-            'name' => $request->name,
+            'name' => trim($request->name),
         ]);
 
-        return redirect()->route('lecturer.sections.index')->with('success', 'Section updated successfully!');
+        return redirect()->route('lecturer.sections.index')->with('success', 'Section berhasil diperbarui.');
     }
 
     public function destroy(Section $section)
@@ -59,11 +59,10 @@ class SectionController extends Controller
             $deletedName = $section->name;
             $section->delete();
             return redirect()->route('lecturer.sections.index')->with([
-                'status' => 'delete-success',
-                'deleted_name' => $deletedName,
+                'success' => "Section {$deletedName} berhasil dihapus.",
             ]);
         } catch (\Exception $e) {
-            return redirect()->route('lecturer.sections.index')->with('status', 'delete-error');
+            return redirect()->route('lecturer.sections.index')->with('error', 'Section tidak bisa dihapus. Pastikan tidak ada challenge yang masih terhubung.');
         }
     }
     public function reorder(Request $request)
@@ -74,6 +73,6 @@ class SectionController extends Controller
             Section::where('id', $id)->update(['order' => $index + 1]);
         }
 
-        return response()->json(['message' => 'Sections reordered successfully!']);
+        return response()->json(['message' => 'Urutan section berhasil diperbarui.']);
     }
 }

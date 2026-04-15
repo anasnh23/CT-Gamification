@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             RankSeeder::class,
             StudentSeeder::class,
             AchievementSeeder::class,
+            BebrasQuestionSeeder::class,
         ]);
     }
 }

@@ -1,49 +1,38 @@
-<nav class="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-50">
-    <!-- Logo / Title -->
-    <div class="flex items-center space-x-3">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-            class="w-8 h-8 text-blue-600">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0h4" />
-        </svg>
-        <a href="{{ route('lecturer.dashboard') }}"
-            class="text-2xl font-bold text-gray-800 hover:text-blue-600 transition duration-200">
-            Dashboard
-        </a>
+<nav class="lecturer-navbar">
+    <div class="lecturer-navbar-title">
+        <div class="lecturer-navbar-logo-wrap">
+            <img src="{{ asset('storage/icons/game.png') }}" alt="Logo" class="lecturer-navbar-logo">
+        </div>
+        <div>
+            <p class="lecturer-navbar-kicker">Lecturer</p>
+            <a href="{{ route('lecturer.dashboard') }}" class="lecturer-navbar-link">Dashboard</a>
+        </div>
     </div>
 
-    <!-- User Info & Dropdown -->
-    <div class="relative">
-        <button id="userMenuButton" class="flex items-center space-x-3 focus:outline-none">
-            <!-- Profile Photo -->
+    <div class="lecturer-user-menu">
+        <button id="userMenuButton" class="lecturer-user-button">
             <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('images/default-avatar.png') }}"
-                alt="User Photo" class="w-10 h-10 object-cover rounded-full border-2 border-gray-300 shadow-sm">
+                alt="User Photo" class="lecturer-user-photo">
 
-            <span class="text-gray-700 font-medium hidden md:inline">Welcome, {{ Auth::user()->name }}</span>
-
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-5 h-5 text-gray-600">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-        </button>
-
-        <!-- Dropdown Menu -->
-        <div id="userDropdown"
-            class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden z-10 transition-all duration-200 ease-in-out opacity-0 scale-95">
-
-            <!-- Profile Info -->
-            <div class="px-4 py-3 border-b border-gray-200 text-center">
-                <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('images/default-avatar.png') }}"
-                    alt="User Avatar" class="w-12 h-12 mx-auto rounded-full shadow-md mb-2">
-                <p class="text-sm text-gray-600">Signed in as</p>
-                <p class="font-semibold text-gray-900">{{ Auth::user()->email }}</p>
+            <div class="lecturer-user-copy">
+                <p class="lecturer-user-role">Pengajar</p>
+                <p class="lecturer-user-name">{{ Auth::user()->name }}</p>
             </div>
 
-            <!-- Logout Button -->
+            <span class="lecturer-user-caret">&#9662;</span>
+        </button>
+
+        <div id="userDropdown" class="lecturer-user-dropdown hidden">
+            <div class="lecturer-user-dropdown-head">
+                <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('images/default-avatar.png') }}"
+                    alt="User Avatar" class="lecturer-user-dropdown-photo">
+                <p class="lecturer-user-dropdown-kicker">Akun</p>
+                <p class="lecturer-user-dropdown-email">{{ Auth::user()->email }}</p>
+            </div>
+
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
-                <button type="submit"
-                    class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition duration-150">
+                <button type="submit" class="lecturer-user-dropdown-action">
                     Logout
                 </button>
             </form>
@@ -51,20 +40,196 @@
     </div>
 </nav>
 
+<style>
+    .lecturer-navbar {
+        position: sticky;
+        top: 0;
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 18px 24px;
+        background: rgba(74, 19, 39, 0.84);
+        border-bottom: 1px solid rgba(255, 228, 236, 0.12);
+        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+        backdrop-filter: blur(12px);
+    }
+
+    .lecturer-navbar-title {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .lecturer-navbar-logo-wrap {
+        width: 46px;
+        height: 46px;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 228, 236, 0.18);
+    }
+
+    .lecturer-navbar-logo {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+    }
+
+    .lecturer-navbar-kicker {
+        margin: 0 0 4px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.32em;
+        color: rgba(255, 228, 236, 0.72);
+    }
+
+    .lecturer-navbar-link {
+        color: #fff;
+        text-decoration: none;
+        font-size: 30px;
+        font-weight: 700;
+    }
+
+    .lecturer-user-menu {
+        position: relative;
+    }
+
+    .lecturer-user-button {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 14px;
+        border-radius: 22px;
+        border: 1px solid rgba(255, 228, 236, 0.18);
+        background: rgba(255, 255, 255, 0.08);
+        color: #fff;
+        cursor: pointer;
+    }
+
+    .lecturer-user-photo,
+    .lecturer-user-dropdown-photo {
+        object-fit: cover;
+        border-radius: 999px;
+        border: 2px solid rgba(255, 228, 236, 0.3);
+        background: #fff;
+    }
+
+    .lecturer-user-photo {
+        width: 42px;
+        height: 42px;
+    }
+
+    .lecturer-user-dropdown-photo {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 12px;
+    }
+
+    .lecturer-user-copy {
+        text-align: left;
+    }
+
+    .lecturer-user-role {
+        margin: 0;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.22em;
+        color: rgba(255, 228, 236, 0.7);
+    }
+
+    .lecturer-user-name {
+        margin: 4px 0 0;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .lecturer-user-caret {
+        font-size: 16px;
+    }
+
+    .lecturer-user-dropdown {
+        position: absolute;
+        right: 0;
+        margin-top: 12px;
+        width: 240px;
+        overflow: hidden;
+        border-radius: 22px;
+        border: 1px solid rgba(255, 228, 236, 0.16);
+        background: #4a1327;
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.32);
+    }
+
+    .lecturer-user-dropdown-head {
+        padding: 18px 16px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 228, 236, 0.1);
+    }
+
+    .lecturer-user-dropdown-kicker {
+        margin: 0;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.24em;
+        color: rgba(255, 228, 236, 0.68);
+    }
+
+    .lecturer-user-dropdown-email {
+        margin: 8px 0 0;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        word-break: break-word;
+    }
+
+    .lecturer-user-dropdown-action {
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: #ffe7ef;
+        text-align: left;
+        padding: 14px 16px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+    .lecturer-user-dropdown-action:hover {
+        background: rgba(219, 39, 119, 0.28);
+    }
+
+    .hidden {
+        display: none !important;
+    }
+
+    @media (max-width: 768px) {
+        .lecturer-navbar {
+            padding: 16px;
+        }
+
+        .lecturer-navbar-link {
+            font-size: 24px;
+        }
+
+        .lecturer-user-copy {
+            display: none;
+        }
+    }
+</style>
+
 <script>
     const userMenuButton = document.getElementById('userMenuButton');
     const userDropdown = document.getElementById('userDropdown');
 
-    userMenuButton.addEventListener('click', (event) => {
+    userMenuButton?.addEventListener('click', function(event) {
         event.stopPropagation();
-        userDropdown.classList.toggle('hidden');
-        userDropdown.classList.toggle('opacity-0');
-        userDropdown.classList.toggle('scale-95');
+        userDropdown?.classList.toggle('hidden');
     });
 
     document.addEventListener('click', function(event) {
-        if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
-            userDropdown.classList.add('hidden', 'opacity-0', 'scale-95');
+        if (userMenuButton && userDropdown && !userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
+            userDropdown.classList.add('hidden');
         }
     });
 </script>

@@ -12,6 +12,7 @@ use App\Http\Controllers\StudentQuestionController;
 use App\Http\Controllers\StudentProfileController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\StudentReviewController;
+use App\Http\Controllers\StudentHistoryController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -99,6 +100,9 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
     Route::get('/profile/edit', [StudentProfileController::class, 'edit'])->name('student.profile.edit');
     Route::put('/profile/update', [StudentProfileController::class, 'update'])->name('student.profile.update');
 
+    // Study history
+    Route::get('/history', [StudentHistoryController::class, 'index'])->name('student.history.index');
+
     // Mission (lebih eksplisit agar method controller bisa "showChallenge")
     Route::get('/mission', [MissionController::class, 'index'])->name('student.mission.index');
     Route::get('/mission/{challenge}', [MissionController::class, 'showChallenge'])->name('student.mission.showChallenge');
@@ -120,6 +124,7 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
     Route::get('/question/{challenge_id}/resume', [StudentQuestionController::class, 'resumeQuestion'])->name('student.resume.question');
     Route::post('/question/check', [StudentQuestionController::class, 'checkAnswer'])->name('student.question.check');
     Route::post('/question/check-multiple', [StudentQuestionController::class, 'checkMultiple'])->name('student.question.checkMultiple');
+    Route::post('/question/help', [StudentQuestionController::class, 'requestHelp'])->name('student.question.help');
     Route::post('/check-essay', [StudentQuestionController::class, 'checkEssayAnswer'])->name('student.check.essay');
 
     // Lives / nyawa

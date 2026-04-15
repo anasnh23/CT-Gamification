@@ -2,346 +2,257 @@
 
 @section('content')
     <div class="animate-fadeIn">
-        <div class="max-w-6xl mx-auto grid grid-cols-3 gap-6 text-gray-900">
-            <!-- Profile -->
-            <div
-                class="bg-gradient-to-b from-blue-500 to-blue-400 p-6 rounded-2xl shadow-lg flex flex-col items-center col-span-2 border border-blue-400 transition hover:scale-105 hover-sfx">
-                <div class="relative w-32 h-32">
-                    <img src="{{ asset('storage/' . $user->profile_photo) }}"
-                        class="w-32 h-32 rounded-full border-4 border-yellow-400 shadow-lg transition hover:scale-110"
-                        alt="Profile Photo">
+        <div class="max-w-6xl mx-auto px-4 py-10">
+            @if (session('success'))
+                <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-emerald-700 shadow-sm">
+                    {{ session('success') }}
                 </div>
-                <h2 class="text-2xl font-extrabold mt-4 text-white tracking-wider drop-shadow-lg">{{ $user->name }}</h2>
-                <p class="text-gray-200">User {{ $user->id }}</p>
-                <a href="{{ route('student.profile.edit', $student->id) }}"
-                    class="bg-yellow-400 text-gray-900 px-6 py-2 mt-3 rounded-full shadow-lg hover:bg-yellow-300 transition hover:scale-105 text-center block hover-sfx"
-                    onclick="playClick();">
-                    Edit Profile
-                </a>
-            </div>
+            @endif
 
-            <!-- Achievements -->
-            <div
-                class="bg-gradient-to-b from-purple-500 to-purple-400 p-6 rounded-2xl shadow-lg border border-purple-400 transition hover:scale-105 hover-sfx">
-                <h3 class="text-xl font-extrabold mb-3 text-center text-white uppercase tracking-wider">🏆 Achievements</h3>
-                <div class="grid grid-cols-3 gap-2">
-                    @foreach ($allAchievements as $achievement)
-                        @php
-                            $pivotData = $student->achievements->firstWhere('id', $achievement->id)?->pivot;
-                            $isUnlocked = !is_null($pivotData);
-                            $unlockedAt = $pivotData?->unlocked_at
-                                ? \Carbon\Carbon::parse($pivotData->unlocked_at)->format('F j, Y \a\t H:i')
-                                : null;
-                        @endphp
-
-                        <div onclick="showModal(
-            '{{ asset('storage/' . $achievement->icon) }}',
-            '{{ $achievement->name }}',
-            '{{ $achievement->description }}',
-            {{ $isUnlocked ? 'true' : 'false' }},
-            '{{ $unlockedAt ?? '' }}'
-        )"
-                            class="flex flex-col items-center p-3 rounded-xl shadow-md border transition hover:scale-110 cursor-pointer
-        {{ $isUnlocked ? 'bg-white border-purple-300' : 'bg-gray-100 border-gray-300 opacity-50 grayscale' }}">
-                            <img src="{{ asset('storage/' . $achievement->icon) }}" class="w-14 h-14">
+            <div class="grid gap-6 lg:grid-cols-[1.45fr_1fr]">
+                <section class="rounded-[28px] border border-rose-200/40 bg-[#fff8f8] p-6 text-slate-900 shadow-xl">
+                    <div class="flex flex-col gap-6 md:flex-row md:items-center">
+                        <div class="shrink-0">
+                            <img src="{{ asset('storage/' . ($user->profile_photo ?? 'profile_photos/default.webp')) }}"
+                                alt="Foto profil"
+                                class="h-28 w-28 rounded-full border-4 border-pink-200 object-cover shadow-lg">
                         </div>
-                    @endforeach
 
+                        <div class="flex-1">
+                            <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rose-500">Profil Mahasiswa</p>
+                            <h1 class="mt-2 text-3xl font-bold">{{ $user->name }}</h1>
+                            <p class="mt-2 text-slate-500">{{ $user->email }}</p>
 
-                </div>
-                <a href="#" class="text-white mt-3 text-center block font-semibold hover:underline">See More</a>
-            </div>
+                            <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                                <div class="rounded-2xl bg-rose-50 px-4 py-3">
+                                    <p class="text-xs uppercase tracking-[0.2em] text-rose-400">NIM</p>
+                                    <p class="mt-1 font-semibold text-slate-800">{{ $student->nim ?: '-' }}</p>
+                                </div>
+                                <div class="rounded-2xl bg-sky-50 px-4 py-3">
+                                    <p class="text-xs uppercase tracking-[0.2em] text-sky-500">Peringkat Mingguan</p>
+                                    <p class="mt-1 font-semibold text-slate-800">#{{ $weeklyRank }}</p>
+                                </div>
+                            </div>
+                        </div>
 
-            <!-- Achievement Modal -->
-            <div id="achievementModal"
-                class="fixed inset-0 bg-black bg-opacity-40 hidden items-center justify-center z-50 transition duration-300 ease-out">
-                <div
-                    class="relative bg-gradient-to-br from-purple-100 to-white p-6 rounded-2xl shadow-2xl w-[90%] max-w-md border border-purple-200 scale-100 animate-fadeIn">
-
-                    <!-- Close Button -->
-                    <button onclick="closeModal()"
-                        class="absolute -top-3 -right-3 bg-white rounded-full shadow-md w-8 h-8 flex items-center justify-center text-purple-500 hover:bg-purple-100 hover:text-red-500 transition text-lg font-bold">
-                        &times;
-                    </button>
-
-                    <!-- Achievement Icon -->
-                    <div class="flex justify-center">
-                        <div
-                            class="w-24 h-24 bg-white rounded-full shadow-inner border-4 border-purple-300 flex items-center justify-center overflow-hidden">
-                            <img id="modalIcon" src="" alt="Achievement Icon" class="w-20 h-20 object-contain">
+                        <div class="shrink-0">
+                            <a href="{{ route('student.profile.edit') }}"
+                                class="inline-flex items-center rounded-2xl bg-gradient-to-r from-pink-600 to-rose-500 px-5 py-3 font-semibold text-white shadow-lg transition hover:scale-[1.02] hover:shadow-pink-300/30">
+                                Edit Profil
+                            </a>
                         </div>
                     </div>
+                </section>
 
-                    <!-- Text Content -->
-                    <h4 id="modalName"
-                        class="text-xl font-extrabold text-purple-800 mt-4 tracking-wide uppercase text-center"></h4>
-                    <p id="modalDescription" class="text-gray-700 text-sm mt-2 px-2 leading-relaxed text-center"></p>
-
-                    <div id="modalStatus"
-                        class="mt-4 px-4 py-2 text-xs rounded-full inline-block
-               font-medium tracking-wide
-               bg-purple-200 text-purple-700">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Current Challenge & XP -->
-            <div class="col-span-2 grid grid-cols-2 gap-6">
-                <!-- Current Challenge -->
-                <div
-                    class="p-5 flex flex-col items-center justify-center bg-white rounded-xl shadow-lg border border-yellow-400 transition hover:scale-105 hover-sfx">
-                    <h3 class="text-xl font-extrabold text-yellow-500">📖 Current Challenge</h3>
-                    <div class="flex items-center justify-center mt-3">
-                        <span class="text-3xl">🏆</span>
-                        <p class="ml-1 font-semibold text-yellow-500">Section {{ $student->currentSection?->name ?? 'X' }}
-                            -
-                            {{ $student->current_challenge_id ?? 'X' }}</p>
-                    </div>
-                    <p class="text-gray-500 text-sm text-center mt-2">
-                        Level Up! 🏅 Keep striving for greatness!
-                    </p>
-                </div>
-
-                <!-- XP & Level -->
-                <div
-                    class="p-5 flex flex-col items-center justify-center bg-white rounded-xl shadow-lg border border-green-500 transition hover:scale-105 hover-sfx">
-                    <h3 class="text-xl font-extrabold text-green-500">⚡ XP & Rank</h3>
-
-                    @php
-                        $minExp = $student->current_rank?->min_exp ?? 0;
-                        $maxExp = $student->current_rank?->max_exp ?? 100;
-                        $currentExp = $student->exp;
-                        $expInCurrentRank = $currentExp - $minExp;
-                        $range = $maxExp - $minExp;
-                        $progressPercent = $range > 0 ? ($expInCurrentRank / $range) * 100 : 0;
-                    @endphp
-
-                    <p class="mt-2 text-gray-500 font-medium text-center">
-                        XP: {{ $student->exp }} / {{ $student->current_rank?->max_exp }}
+                <section class="rounded-[28px] border border-pink-200/25 bg-[#4a1327] p-6 text-white shadow-xl">
+                    <p class="text-sm font-semibold uppercase tracking-[0.25em] text-pink-200/80">Rank dan EXP</p>
+                    <h2 class="mt-2 text-2xl font-bold">{{ $currentRank?->name ?? 'Belum Ada Rank' }}</h2>
+                    <p class="mt-2 text-sm text-rose-100/80">
+                        EXP {{ number_format($student->exp) }}
+                        @if ($currentRank)
+                            / {{ number_format($currentRank->max_exp) }}
+                        @endif
                     </p>
 
-                    <div
-                        class="w-full bg-gray-300 rounded-full h-5 mt-2 relative max-w-xs border border-green-400 overflow-hidden">
-                        <div class="bg-gradient-to-r from-green-400 to-green-500 h-5 rounded-full transition-all duration-700 animate-pulse"
-                            style="width: {{ $progressPercent }}%">
+                    <div class="mt-5 h-3 overflow-hidden rounded-full bg-white/15">
+                        <div class="h-3 rounded-full bg-gradient-to-r from-amber-300 via-pink-300 to-rose-300"
+                            style="width: {{ $expProgress }}%"></div>
+                    </div>
+
+                    <div class="mt-6 grid grid-cols-2 gap-4">
+                        <div class="rounded-2xl bg-white/10 px-4 py-4">
+                            <p class="text-xs uppercase tracking-[0.2em] text-pink-100/70">Total Score</p>
+                            <p class="mt-2 text-2xl font-bold">{{ number_format($student->total_score) }}</p>
+                        </div>
+                        <div class="rounded-2xl bg-white/10 px-4 py-4">
+                            <p class="text-xs uppercase tracking-[0.2em] text-pink-100/70">Streak</p>
+                            <p class="mt-2 text-2xl font-bold">{{ $student->streak }} hari</p>
                         </div>
                     </div>
-
-                    <p class="mt-2 text-green-500 font-semibold text-center">
-                        Rank: {{ $student->current_rank?->name ?? 'Unknown' }}
-                    </p>
-                </div>
-
+                </section>
             </div>
 
-            <!-- Leaderboard -->
-            <div
-                class="bg-gradient-to-b from-blue-500 to-blue-400 p-6 rounded-2xl shadow-lg row-span-2 h-full flex flex-col border border-blue-400 transition hover:scale-105 hover-sfx">
-                <h3 class="text-xl font-extrabold text-yellow-400 text-center uppercase tracking-wider">🏆 Leaderboard</h3>
+            <div class="mt-6 grid gap-6 xl:grid-cols-[1.25fr_1fr]">
+                <div class="space-y-6">
+                    <section class="rounded-[28px] border border-rose-200/40 bg-[#fff8f8] p-6 text-slate-900 shadow-xl">
+                        <div class="flex items-center justify-between gap-4">
+                            <div>
+                                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rose-500">Ringkasan Akademik</p>
+                                <h2 class="mt-2 text-2xl font-bold">Informasi Mahasiswa</h2>
+                            </div>
+                        </div>
 
-                <div class="flex-1 overflow-y-auto max-h-96 mt-4 pr-1 custom-scrollbar">
-                    <ul class="space-y-3">
+                        <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Program Studi</p>
+                                <p class="mt-2 font-semibold">{{ $student->prodi ?: '-' }}</p>
+                            </div>
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Semester</p>
+                                <p class="mt-2 font-semibold">{{ $student->semester ?: '-' }}</p>
+                            </div>
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Kelas</p>
+                                <p class="mt-2 font-semibold">{{ $student->class ?: '-' }}</p>
+                            </div>
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">No. Telepon</p>
+                                <p class="mt-2 font-semibold">{{ $student->phone_number ?: '-' }}</p>
+                            </div>
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Agama</p>
+                                <p class="mt-2 font-semibold">{{ $student->religion ?: '-' }}</p>
+                            </div>
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Jenis Kelamin</p>
+                                <p class="mt-2 font-semibold">{{ $student->gender ?: '-' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Alamat</p>
+                            <p class="mt-2 leading-7 text-slate-700">{{ $student->address ?: 'Alamat belum diisi.' }}</p>
+                        </div>
+                    </section>
+
+                    <section class="rounded-[28px] border border-rose-200/40 bg-[#fff8f8] p-6 text-slate-900 shadow-xl">
+                        <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rose-500">Progres Belajar</p>
+                        <h2 class="mt-2 text-2xl font-bold">Status Misi Saat Ini</h2>
+
+                        <div class="mt-6 grid gap-4 md:grid-cols-2">
+                            <div class="rounded-2xl bg-gradient-to-br from-rose-50 to-pink-50 p-5 border border-rose-200">
+                                <p class="text-xs uppercase tracking-[0.2em] text-rose-400">Section Aktif</p>
+                                <p class="mt-2 text-xl font-bold">
+                                    {{ $student->currentSection?->name ? 'Section ' . $student->currentSection->order . ' - ' . $student->currentSection->name : 'Belum ada section aktif' }}
+                                </p>
+                            </div>
+                            <div class="rounded-2xl bg-gradient-to-br from-sky-50 to-blue-50 p-5 border border-sky-200">
+                                <p class="text-xs uppercase tracking-[0.2em] text-sky-500">Mission Aktif</p>
+                                <p class="mt-2 text-xl font-bold">
+                                    {{ $currentChallenge?->title ?? 'Belum ada mission aktif' }}
+                                </p>
+                                <p class="mt-2 text-sm text-slate-500">
+                                    {{ $currentChallenge?->section?->name ? 'Masih berada di ' . $currentChallenge->section->name : 'Pilih mission dari halaman missions untuk mulai belajar.' }}
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="mt-4 grid gap-4 sm:grid-cols-3">
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Mission Selesai</p>
+                                <p class="mt-2 text-2xl font-bold">{{ $completedChallengesCount }} / {{ $totalChallengesCount }}</p>
+                            </div>
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Section Terbuka</p>
+                                <p class="mt-2 text-2xl font-bold">{{ $unlockedSectionsCount }}</p>
+                            </div>
+                            <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                                <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Section Tuntas</p>
+                                <p class="mt-2 text-2xl font-bold">{{ $completedSectionsCount }}</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="rounded-[28px] border border-rose-200/40 bg-[#fff8f8] p-6 text-slate-900 shadow-xl">
+                        <div class="flex items-center justify-between gap-4">
+                            <div>
+                                <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rose-500">Achievements</p>
+                                <h2 class="mt-2 text-2xl font-bold">Pencapaian Belajar</h2>
+                            </div>
+                            <div class="rounded-2xl bg-rose-50 px-4 py-3 text-right">
+                                <p class="text-xs uppercase tracking-[0.2em] text-rose-400">Terbuka</p>
+                                <p class="mt-1 font-semibold">{{ count($unlockedAchievementIds) }} / {{ $allAchievements->count() }}</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                            @foreach ($allAchievements as $achievement)
+                                @php
+                                    $pivotData = $student->achievements->firstWhere('id', $achievement->id)?->pivot;
+                                    $isUnlocked = !is_null($pivotData);
+                                    $unlockedAt = $pivotData?->unlocked_at
+                                        ? \Carbon\Carbon::parse($pivotData->unlocked_at)->translatedFormat('d F Y, H:i')
+                                        : null;
+                                @endphp
+
+                                <button type="button"
+                                    onclick='showModal(@json(asset("storage/" . $achievement->icon)), @json($achievement->name), @json($achievement->description), {{ $isUnlocked ? "true" : "false" }}, @json($unlockedAt ?? ""))'
+                                    class="rounded-2xl border p-4 text-center transition hover:scale-[1.03] {{ $isUnlocked ? 'border-pink-200 bg-gradient-to-br from-white to-rose-50 shadow-sm' : 'border-slate-200 bg-slate-100 opacity-60 grayscale' }}">
+                                    <img src="{{ asset('storage/' . $achievement->icon) }}" alt="{{ $achievement->name }}"
+                                        class="mx-auto h-16 w-16 object-contain">
+                                    <p class="mt-3 text-sm font-semibold text-slate-700">{{ $achievement->name }}</p>
+                                </button>
+                            @endforeach
+                        </div>
+                    </section>
+                </div>
+
+                <section class="rounded-[28px] border border-pink-200/25 bg-[#4a1327] p-6 text-white shadow-xl">
+                    <p class="text-sm font-semibold uppercase tracking-[0.25em] text-pink-200/80">Leaderboard</p>
+                    <h2 class="mt-2 text-2xl font-bold">Papan Skor Mingguan</h2>
+                    <p class="mt-2 text-sm text-rose-100/75">Posisi ditentukan dari weekly score mahasiswa.</p>
+
+                    <div class="mt-6 space-y-3">
                         @foreach ($leaderboard as $index => $entry)
                             @php
                                 $isCurrentUser = $entry->name === $user->name;
                             @endphp
-                            <li
-                                class="flex items-center p-3 rounded-xl shadow-md transition transform hover:scale-105 hover-sfx
-                    {{ $isCurrentUser ? 'bg-yellow-400 border-l-8 border-yellow-300 text-gray-900 scale-105' : 'bg-white hover:bg-gray-100' }}">
-                                <span class="font-bold text-lg w-8 text-center">{{ $index + 1 }}</span>
-                                <img src="{{ asset('storage/' . $entry->profile_photo) }}"
-                                    class="w-10 h-10 rounded-full border-2 border-gray-500 shadow">
-                                <div class="ml-3 flex-1 overflow-hidden">
-                                    <p
-                                        class="text-sm font-semibold truncate {{ $isCurrentUser ? 'text-gray-900' : 'text-gray-700' }}">
-                                        {{ $entry->name }}
+                            <div
+                                class="flex items-center gap-3 rounded-2xl border px-4 py-3 {{ $isCurrentUser ? 'border-amber-300/70 bg-amber-100 text-slate-900' : 'border-white/10 bg-white/10 text-white' }}">
+                                <div class="w-8 text-center text-sm font-bold">{{ $index + 1 }}</div>
+                                <img src="{{ asset('storage/' . $entry->profile_photo) }}" alt="{{ $entry->name }}"
+                                    class="h-11 w-11 rounded-full border border-white/30 object-cover">
+                                <div class="min-w-0 flex-1">
+                                    <p class="truncate font-semibold">{{ $entry->name }}</p>
+                                    <p class="text-xs {{ $isCurrentUser ? 'text-slate-600' : 'text-rose-100/70' }}">
+                                        {{ $isCurrentUser ? 'Anda' : 'Mahasiswa' }}
                                     </p>
                                 </div>
-                                <span class="text-gray-500 text-sm font-bold whitespace-nowrap">{{ $entry->weekly_score }}
-                                    pts</span>
-                            </li>
+                                <div class="text-right">
+                                    <p class="text-sm font-bold">{{ number_format($entry->weekly_score) }}</p>
+                                    <p class="text-xs {{ $isCurrentUser ? 'text-slate-600' : 'text-rose-100/70' }}">pts</p>
+                                </div>
+                            </div>
                         @endforeach
-                    </ul>
-                </div>
+                    </div>
+                </section>
             </div>
-
-
-            <!-- Lives -->
-            <div class="col-span-2 text-center">
-                <h3
-                    class="text-2xl font-extrabold tracking-wide uppercase 
-        {{ $student->lives == 0 ? 'text-gray-500 animate-flash' : ($student->lives == 1 ? 'text-red-600 animate-pulse' : ($student->lives == 2 ? 'text-yellow-500 animate-bounce' : 'text-red-500')) }}">
-                    {{ $student->lives == 0 ? '💀 Out of Lives!' : '🔥 Lives' }}
-                </h3>
-
-                <div class="flex justify-center mt-2 space-x-2">
-                    @for ($i = 0; $i < 5; $i++)
-                        <span
-                            class="text-5xl transition transform 
-                {{ $i < $student->lives ? 'text-red-500 drop-shadow-[0_0_10px_rgba(255,0,0,0.7)] scale-125' : 'text-gray-500 opacity-30 scale-90' }} 
-                {{ $student->lives == 2 && $i == 0 ? 'animate-warning' : '' }}
-                {{ $student->lives == 1 && $i == 0 ? 'animate-danger' : '' }}
-                {{ $student->lives == 0 ? 'animate-shake' : '' }}">
-                            ❤️
-                        </span>
-                    @endfor
-                </div>
-
-                <!-- Efek "Game Over" Saat Lives Habis -->
-                @if ($student->lives == 0)
-                    <p class="mt-4 text-gray-400 font-semibold text-lg">No more lives! Wait for refill.</p>
-                @endif
-            </div>
-            <style>
-                @keyframes fadeIn {
-                    from {
-                        opacity: 0;
-                        transform: scale(0.95);
-                    }
-
-                    to {
-                        opacity: 1;
-                        transform: scale(1);
-                    }
-                }
-
-                .animate-fadeIn {
-                    animation: fadeIn 0.5s ease-out;
-                }
-
-                @keyframes wiggle {
-
-                    0%,
-                    100% {
-                        transform: rotate(0deg);
-                    }
-
-                    25% {
-                        transform: rotate(-5deg);
-                    }
-
-                    50% {
-                        transform: rotate(5deg);
-                    }
-
-                    75% {
-                        transform: rotate(-5deg);
-                    }
-                }
-
-                .animate-wiggle {
-                    animation: wiggle 0.3s ease-in-out infinite;
-                }
-
-                @keyframes shake {
-
-                    0%,
-                    100% {
-                        transform: translateX(0);
-                    }
-
-                    25% {
-                        transform: translateX(-3px);
-                    }
-
-                    50% {
-                        transform: translateX(3px);
-                    }
-
-                    75% {
-                        transform: translateX(-3px);
-                    }
-                }
-
-                .animate-shake {
-                    animation: shake 0.5s ease-in-out infinite;
-                }
-
-                @keyframes flash {
-
-                    0%,
-                    100% {
-                        opacity: 1;
-                    }
-
-                    50% {
-                        opacity: 0.3;
-                    }
-                }
-
-                .animate-flash {
-                    animation: flash 0.8s ease-in-out infinite;
-                }
-
-                @keyframes warning {
-
-                    0%,
-                    100% {
-                        transform: scale(1);
-                    }
-
-                    50% {
-                        transform: scale(1.1);
-                    }
-                }
-
-                .animate-warning {
-                    animation: warning 0.5s ease-in-out infinite;
-                }
-
-                @keyframes danger {
-
-                    0%,
-                    100% {
-                        transform: rotate(0deg);
-                        opacity: 1;
-                    }
-
-                    25% {
-                        transform: rotate(-5deg);
-                        opacity: 0.5;
-                    }
-
-                    50% {
-                        transform: rotate(5deg);
-                        opacity: 1;
-                    }
-
-                    75% {
-                        transform: rotate(-5deg);
-                        opacity: 0.5;
-                    }
-                }
-
-                .animate-danger {
-                    animation: danger 0.3s ease-in-out infinite;
-                }
-
-                .custom-scrollbar::-webkit-scrollbar {
-                    width: 6px;
-                }
-
-                .custom-scrollbar::-webkit-scrollbar-thumb {
-                    background: rgba(255, 255, 255, 0.2);
-                    border-radius: 9999px;
-                }
-
-                .custom-scrollbar::-webkit-scrollbar-track {
-                    background: transparent;
-                }
-            </style>
         </div>
     </div>
+
+    <div id="achievementModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4">
+        <div class="relative w-full max-w-md rounded-[28px] border border-pink-200/35 bg-[#fff8f8] p-6 text-slate-900 shadow-2xl">
+            <button type="button" onclick="closeModal()"
+                class="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-rose-100 text-rose-600 transition hover:bg-rose-200">
+                &times;
+            </button>
+
+            <div class="flex justify-center">
+                <div class="flex h-24 w-24 items-center justify-center rounded-full border-4 border-pink-200 bg-white shadow-inner">
+                    <img id="modalIcon" src="" alt="Achievement Icon" class="h-16 w-16 object-contain">
+                </div>
+            </div>
+
+            <h3 id="modalName" class="mt-5 text-center text-2xl font-bold"></h3>
+            <p id="modalDescription" class="mt-3 text-center leading-7 text-slate-600"></p>
+            <div id="modalStatus"
+                class="mx-auto mt-5 inline-flex rounded-full bg-rose-100 px-4 py-2 text-sm font-semibold text-rose-700">
+            </div>
+        </div>
+    </div>
+
     <audio id="hover-sound" src="{{ asset('sfx/hover.mp3') }}"></audio>
     <audio id="click-sound" src="{{ asset('sfx/click.mp3') }}"></audio>
+
     <script>
         function showModal(icon, name, description, isUnlocked, unlockedAt) {
             document.getElementById('modalIcon').src = icon;
             document.getElementById('modalName').innerText = name;
             document.getElementById('modalDescription').innerText = description;
             document.getElementById('modalStatus').innerText = isUnlocked ?
-                `Unlocked at: ${unlockedAt}` :
-                '🔒 Not unlocked yet';
+                `Dibuka pada: ${unlockedAt}` :
+                'Belum terbuka';
 
             const modal = document.getElementById('achievementModal');
             modal.classList.remove('hidden');
@@ -354,14 +265,6 @@
             modal.classList.add('hidden');
         }
 
-        function playClick() {
-            const audio = document.getElementById("click-sound");
-            if (audio) {
-                audio.currentTime = 0;
-                audio.play();
-            }
-        }
-
         function playHoverSound() {
             const audio = document.getElementById("hover-sound");
             if (audio) {
@@ -369,21 +272,11 @@
                 audio.play();
             }
         }
-        document.addEventListener("DOMContentLoaded", function() {
-            const hoverElements = document.querySelectorAll(".hover-sfx");
 
-            hoverElements.forEach(el => {
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".hover-sfx").forEach((el) => {
                 el.addEventListener("mouseenter", playHoverSound);
             });
         });
-
-        function rebindHoverSound() {
-            const hoverElements = document.querySelectorAll(".hover-sfx");
-
-            hoverElements.forEach(el => {
-                el.removeEventListener("mouseenter", playHoverSound);
-                el.addEventListener("mouseenter", playHoverSound);
-            });
-        }
     </script>
 @endsection

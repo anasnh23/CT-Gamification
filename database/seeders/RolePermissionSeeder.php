@@ -34,13 +34,13 @@ class RolePermissionSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::findOrCreate($permission, 'web');
         }
 
         // Create roles and assign permissions
-        $adminRole = Role::create(['name' => 'admin']);
-        $studentRole = Role::create(['name' => 'student']);
-        $lecturerRole = Role::create(['name' => 'lecturer']);
+        $adminRole = Role::findOrCreate('admin', 'web');
+        $studentRole = Role::findOrCreate('student', 'web');
+        $lecturerRole = Role::findOrCreate('lecturer', 'web');
 
         // Assign specific permissions to editor
         $adminRole->givePermissionTo(['create-user', 'read-user', 'update-user', 'delete-user']);

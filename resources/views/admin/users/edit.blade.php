@@ -1,223 +1,139 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    <div class="bg-white p-8 rounded-lg shadow-md max-w-3xl mx-auto">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-700">✏️ Edit User</h2>
-            <a href="{{ route('admin.users.index') }}"
-                class="bg-gray-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-600 transition duration-200">
-                ⬅️ Back to List
-            </a>
-        </div>
-
-        <!-- Success & Error Messages -->
-        @if (session('success'))
-            <div class="mb-4 p-3 bg-green-100 text-green-700 rounded-lg shadow">
-                ✅ {{ session('success') }}
-            </div>
-        @endif
+    <div class="admin-form-page">
+        <section class="admin-form-hero admin-surface">
+            <p class="admin-form-kicker">Users</p>
+            <h1 class="admin-form-title">Perbarui akun pengguna</h1>
+        </section>
 
         @if ($errors->any())
-            <div class="mb-4 p-3 bg-red-100 text-red-700 rounded-lg shadow">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>⚠️ {{ $error }}</li>
-                    @endforeach
-                </ul>
+            <div class="admin-form-alert">
+                <strong>Perubahan belum bisa disimpan.</strong>
+                <ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>
             </div>
         @endif
 
-        <!-- Edit Form -->
-        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" enctype="multipart/form-data" class="admin-card-white admin-form-card">
             @csrf
             @method('PUT')
 
-            <!-- Profile Photo -->
-            <div class="mb-6 flex flex-col items-center">
-                <div class="relative">
-                    <img id="profile-photo-preview"
-                        src="{{ $user->profile_photo ? asset('storage/' . $user->profile_photo) : asset('images/default-avatar.png') }}"
-                        class="w-24 h-24 rounded-full shadow border border-gray-300 mb-2" alt="Profile Photo">
+            <div class="admin-form-profile">
+                <img id="profile-photo-preview" src="{{ $user->profile_photo ? asset('storage/' . $user->profile_photo) : asset('images/default-avatar.png') }}" alt="{{ $user->name }}">
+                <div class="admin-form-profile-meta">
+                    <strong>{{ $user->name }}</strong>
+                    <span>{{ $user->email }}</span>
+                </div>
+            </div>
 
+            <div class="admin-form-grid two">
+                <div><label>Nama</label><input type="text" name="name" value="{{ old('name', $user->name) }}"></div>
+                <div><label>Email</label><input type="email" name="email" value="{{ old('email', $user->email) }}"></div>
+            </div>
+
+            <div class="admin-form-grid two">
+                <div><label>Password Baru</label><input type="password" name="password"></div>
+                <div><label>Konfirmasi Password</label><input type="password" name="password_confirmation"></div>
+            </div>
+
+            <div class="admin-form-grid two">
+                <div>
+                    <label>Role</label>
+                    <select name="role" id="role" onchange="toggleStudentFields()" required>
+                        <option value="admin" {{ $user->hasRole('admin') ? 'selected' : '' }}>Admin</option>
+                        <option value="lecturer" {{ $user->hasRole('lecturer') ? 'selected' : '' }}>Lecturer</option>
+                        <option value="student" {{ $user->hasRole('student') ? 'selected' : '' }}>Student</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Ganti Foto Profil</label>
+                    <input type="file" name="profile_photo" accept="image/*">
                     @if ($user->profile_photo && $user->profile_photo !== 'profile_photos/default.webp')
-                        <!-- Remove Photo Button -->
-                        <button type="button" onclick="removeProfilePhoto()"
-                            class="absolute top-0 right-0 bg-red-500 text-white text-xs px-2 py-1 rounded-full shadow hover:bg-red-600">
-                            ✖
-                        </button>
-                        <input type="hidden" name="delete_photo" id="delete-photo" value="0">
+                        <label class="admin-checkbox"><input type="checkbox" name="delete_photo" value="1"> Hapus foto saat ini</label>
                     @endif
                 </div>
-                <label class="text-gray-700 font-semibold">Change Profile Photo:</label>
-                <input type="file" name="profile_photo" id="profile_photo"
-                    class="w-full border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-200">
             </div>
 
-            <!-- Name & Email -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label for="name" class="block text-gray-700 font-bold mb-2">Full Name</label>
-                    <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}"
-                        class="w-full border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-200" required>
+            <div id="studentFields" class="admin-form-student" style="display:none;">
+                <h2>Data Mahasiswa</h2>
+                <div class="admin-form-grid two">
+                    <div><label>NIM</label><input type="text" name="nim" value="{{ old('nim', $user->student->nim ?? '') }}"></div>
+                    <div><label>No. Telepon</label><input type="text" name="phone_number" value="{{ old('phone_number', $user->student->phone_number ?? '') }}"></div>
                 </div>
-                <div>
-                    <label for="email" class="block text-gray-700 font-bold mb-2">Email Address</label>
-                    <input type="email" name="email" id="email" value="{{ old('email', $user->email) }}"
-                        class="w-full border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-200" required>
-                </div>
-            </div>
-
-            <!-- Password -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">Password (Leave blank to keep current)</label>
-                    <div class="relative">
-                        <input type="password" name="password" id="password"
-                            class="w-full border-gray-300 rounded-md p-2 pr-10 focus:ring focus:ring-blue-200">
-                        <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer"
-                            onclick="togglePassword('password')">
-                            👁️
-                        </span>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-gray-700 font-bold mb-2">Confirm Password</label>
-                    <div class="relative">
-                        <input type="password" name="password_confirmation" id="password_confirmation"
-                            class="w-full border-gray-300 rounded-md p-2 pr-10 focus:ring focus:ring-blue-200">
-                        <span class="absolute inset-y-0 right-3 flex items-center cursor-pointer"
-                            onclick="togglePassword('password_confirmation')">👁️</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Role Selection -->
-            <div class="mb-6 mt-4">
-                <label for="role" class="block text-gray-700 font-bold mb-2">User Role</label>
-                <select name="role" id="role"
-                    class="w-full border-gray-300 rounded-md p-2 focus:ring focus:ring-blue-200" required>
-                    <option value="admin" {{ $user->hasRole('admin') ? 'selected' : '' }}>Admin</option>
-                    <option value="lecturer" {{ $user->hasRole('lecturer') ? 'selected' : '' }}>Lecturer</option>
-                    <option value="student" {{ $user->hasRole('student') ? 'selected' : '' }}>Student</option>
-                </select>
-            </div>
-
-            <!-- Student-Only Fields -->
-            <div id="student-fields" class="{{ $user->hasRole('student') ? '' : 'hidden' }}">
-                <h3 class="text-lg font-bold text-gray-700 mb-3">📚 Student Information</h3>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="admin-form-grid two">
+                    <div><label>Tanggal Lahir</label><input type="date" name="birth_date" value="{{ old('birth_date', $user->student->birth_date ?? '') }}"></div>
                     <div>
-                        <label for="nim" class="block text-gray-700 font-bold mb-2">NIM</label>
-                        <input type="text" name="nim" id="nim" value="{{ old('nim', $user->student->nim ?? '') }}"
-                            class="w-full border-gray-300 rounded-md p-2">
-                    </div>
-                    <div>
-                        <label for="birth_date" class="block text-gray-700 font-bold mb-2">Birth Date</label>
-                        <input type="date" name="birth_date" id="birth_date"
-                            value="{{ old('birth_date', $user->student->birth_date ?? '') }}"
-                            class="w-full border-gray-300 rounded-md p-2">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="religion" class="block text-gray-700 font-bold mb-2">Religion</label>
-                        <select name="religion" id="religion" class="w-full border-gray-300 rounded-md p-2">
-                            <option value="Islam"
-                                {{ old('religion', $user->student->religion ?? '') == 'Islam' ? 'selected' : '' }}>Islam</option>
-                            <option value="Protestan"
-                                {{ old('religion', $user->student->religion ?? '') == 'Protestan' ? 'selected' : '' }}>Protestan
-                            </option>
-                            <option value="Katolik"
-                                {{ old('religion', $user->student->religion ?? '') == 'Katolik' ? 'selected' : '' }}>Katolik
-                            </option>
-                            <option value="Hindu"
-                                {{ old('religion', $user->student->religion ?? '') == 'Hindu' ? 'selected' : '' }}>Hindu</option>
-                            <option value="Buddha"
-                                {{ old('religion', $user->student->religion ?? '') == 'Buddha' ? 'selected' : '' }}>Buddha
-                            </option>
-                            <option value="Konghucu"
-                                {{ old('religion', $user->student->religion ?? '') == 'Konghucu' ? 'selected' : '' }}>Konghucu
-                            </option>
-                            <option value="Lainnya"
-                                {{ old('religion', $user->student->religion ?? '') == 'Lainnya' ? 'selected' : '' }}>Lainnya
-                            </option>
-                        </select>
-                    </div>
-                    <div>
-                        <label for="gender" class="block text-gray-700 font-bold mb-2">Gender</label>
-                        <select name="gender" id="gender" class="w-full border-gray-300 rounded-md p-2">
-                            <option value="Laki-laki"
-                                {{ old('gender', $user->student->gender ?? '') == 'Laki-laki' ? 'selected' : '' }}>Laki-laki
-                            </option>
-                            <option value="Perempuan"
-                                {{ old('gender', $user->student->gender ?? '') == 'Perempuan' ? 'selected' : '' }}>Perempuan
-                            </option>
+                        <label>Agama</label>
+                        <select name="religion">
+                            @foreach (['Islam','Protestan','Katolik','Hindu','Buddha','Konghucu','Lainnya'] as $religion)
+                                <option value="{{ $religion }}" {{ old('religion', $user->student->religion ?? '') === $religion ? 'selected' : '' }}>{{ $religion }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="admin-form-grid two">
                     <div>
-                        <label for="phone_number" class="block text-gray-700 font-bold mb-2">Phone Number</label>
-                        <input type="text" name="phone_number" id="phone_number"
-                            value="{{ old('phone_number', $user->student->phone_number ?? '') }}"
-                            class="w-full border-gray-300 rounded-md p-2">
-                    </div>
-                    <div>
-                        <label for="address" class="block text-gray-700 font-bold mb-2">Address</label>
-                        <input type="text" name="address" id="address"
-                            value="{{ old('address', $user->student->address ?? '') }}"
-                            class="w-full border-gray-300 rounded-md p-2">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label for="prodi" class="block text-gray-700 font-bold mb-2">Program</label>
-                        <select name="prodi" id="prodi" class="w-full border-gray-300 rounded-md p-2">
-                            <option value="Sistem Informasi Bisnis"
-                                {{ old('prodi', $user->student->prodi ?? '') == 'Sistem Informasi Bisnis' ? 'selected' : '' }}>
-                                Sistem Informasi Bisnis</option>
-                            <option value="Teknik Informatika"
-                                {{ old('prodi', $user->student->prodi ?? '') == 'Teknik Informatika' ? 'selected' : '' }}>Teknik
-                                Informatika</option>
+                        <label>Jenis Kelamin</label>
+                        <select name="gender">
+                            <option value="Laki-laki" {{ old('gender', $user->student->gender ?? '') === 'Laki-laki' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="Perempuan" {{ old('gender', $user->student->gender ?? '') === 'Perempuan' ? 'selected' : '' }}>Perempuan</option>
                         </select>
                     </div>
+                    <div><label>Alamat</label><input type="text" name="address" value="{{ old('address', $user->student->address ?? '') }}"></div>
+                </div>
+                <div class="admin-form-grid three">
                     <div>
-                        <label for="semester" class="block text-gray-700 font-bold mb-2">Semester</label>
-                        <input type="number" name="semester" id="semester"
-                            value="{{ old('semester', $user->student->semester ?? '') }}"
-                            class="w-full border-gray-300 rounded-md p-2">
+                        <label>Program Studi</label>
+                        <select name="prodi">
+                            <option value="Sistem Informasi Bisnis" {{ old('prodi', $user->student->prodi ?? '') === 'Sistem Informasi Bisnis' ? 'selected' : '' }}>Sistem Informasi Bisnis</option>
+                            <option value="Teknik Informatika" {{ old('prodi', $user->student->prodi ?? '') === 'Teknik Informatika' ? 'selected' : '' }}>Teknik Informatika</option>
+                        </select>
                     </div>
+                    <div><label>Semester</label><input type="number" min="1" max="8" name="semester" value="{{ old('semester', $user->student->semester ?? '') }}"></div>
+                    <div><label>Kelas</label><input type="text" name="class" value="{{ old('class', $user->student->class ?? '') }}"></div>
                 </div>
             </div>
 
-            <!-- Submit Button -->
-            <div class="mt-6 flex justify-end">
-                <button type="submit"
-                    class="bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-blue-500 transition">
-                    💾 Save Changes
-                </button>
+            <div class="admin-form-actions">
+                <a href="{{ route('admin.users.show', $user->id) }}" class="btn-neutral">Kembali</a>
+                <button type="submit" class="btn-primary">Simpan Perubahan</button>
             </div>
         </form>
     </div>
 
+    <style>
+        .admin-form-page { max-width: 1040px; margin: 0 auto; }
+        .admin-form-hero { padding:28px; border-radius:30px; margin-bottom:24px; }
+        .admin-form-kicker { margin:0; font-size:12px; letter-spacing:.32em; text-transform:uppercase; color:rgba(255,236,242,.72); }
+        .admin-form-title { margin:12px 0 0; color:#fff; font-size:40px; }
+        .admin-form-copy { margin:14px 0 0; color:rgba(255,236,242,.75); line-height:1.8; }
+        .admin-form-alert { margin-bottom:16px; padding:16px 18px; border-radius:18px; background:rgba(254,226,226,.96); color:#991b1b; }
+        .admin-form-card { padding:24px; border-radius:30px; }
+        .admin-form-profile { display:flex; align-items:center; gap:16px; margin-bottom:22px; padding:18px; border-radius:22px; background:#fff7fa; }
+        .admin-form-profile img { width:72px; height:72px; object-fit:cover; border-radius:999px; }
+        .admin-form-profile-meta { display:flex; flex-direction:column; gap:4px; color:#1f2937; }
+        .admin-form-profile-meta span { color:#64748b; font-size:14px; }
+        .admin-form-grid { display:grid; gap:20px; margin-bottom:20px; }
+        .admin-form-grid.two { grid-template-columns:repeat(2,minmax(0,1fr)); }
+        .admin-form-grid.three { grid-template-columns:repeat(3,minmax(0,1fr)); }
+        .admin-form-card label { display:block; margin-bottom:10px; font-weight:700; color:#334155; }
+        .admin-form-card input, .admin-form-card select { width:100%; padding:14px 16px; border-radius:16px; border:1px solid #f0b6c9; background:#fff; color:#1f2937; }
+        .admin-form-student { margin-top:10px; padding:22px; border-radius:24px; background:#fff7fa; border:1px solid #f6d3e0; }
+        .admin-form-student h2 { margin:0 0 18px; color:#9f1d4f; }
+        .admin-checkbox { margin-top:10px; display:flex; align-items:center; gap:10px; color:#64748b; }
+        .admin-checkbox input { width:auto; }
+        .admin-form-actions { display:flex; justify-content:space-between; gap:14px; margin-top:24px; }
+        .btn-primary, .btn-neutral { display:inline-flex; align-items:center; justify-content:center; padding:14px 18px; border-radius:16px; text-decoration:none; font-weight:700; border:0; cursor:pointer; color:#fff; }
+        .btn-primary { background:var(--admin-accent); }
+        .btn-neutral { background:#64748b; }
+        @media (max-width:768px) { .admin-form-grid.two, .admin-form-grid.three { grid-template-columns:1fr; } .admin-form-actions { flex-direction:column; } .admin-form-title { font-size:32px; } }
+    </style>
+
     <script>
-        function togglePassword(id) {
-            let input = document.getElementById(id);
-            input.type = input.type === "password" ? "text" : "password";
+        function toggleStudentFields() {
+            const role = document.getElementById('role').value;
+            document.getElementById('studentFields').style.display = role === 'student' ? 'block' : 'none';
         }
-
-        function removeProfilePhoto() {
-            document.getElementById('profile-photo-preview').src = "{{ asset('storage/profile_photos/default.webp') }}";
-            document.getElementById('delete-photo').value = "1";
-        }
-
-        document.getElementById('role').addEventListener('change', function() {
-            document.getElementById('student-fields').classList.toggle('hidden', this.value !== 'student');
-        });
+        toggleStudentFields();
     </script>
 @endsection

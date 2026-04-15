@@ -1,124 +1,68 @@
 @extends('admin.layouts.app')
 
 @section('content')
-    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-lg border border-gray-200 font-inter">
-        <!-- Header -->
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-2xl font-bold text-gray-800 flex items-center space-x-2">
-                👤 <span>User Details</span>
-            </h2>
-            <a href="{{ route('admin.users.index') }}"
-                class="flex items-center bg-gray-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-gray-600 transition duration-300 ease-in-out">
-                ⬅️ Back to List
-            </a>
-        </div>
-
-        <!-- User Profile -->
-        <div
-            class="flex flex-col md:flex-row items-center md:items-start space-x-0 md:space-x-6 bg-gray-50 p-6 rounded-lg shadow-md">
-            <div class="flex-shrink-0 relative">
-                <img id="profilePhoto"
-                    src="{{ $user->profile_photo ? asset('storage/' . $user->profile_photo) : asset('images/default-avatar.png') }}"
-                    alt="{{ $user->name }}"
-                    class="w-40 h-40 object-cover rounded-full shadow-md border border-gray-300 cursor-pointer transition duration-300 hover:shadow-xl">
-                <p class="text-sm text-gray-500 text-center mt-2">Click to enlarge</p>
-            </div>
-            <div class="mt-4 md:mt-0 space-y-2">
-                <h3 class="text-xl font-semibold text-gray-800">{{ $user->name }}</h3>
-                <p class="text-gray-600"><strong>📧 Email:</strong> {{ $user->email }}</p>
-                <p class="text-gray-600"><strong>🎭 Role:</strong>
-                    <span class="bg-blue-200 text-blue-800 text-sm px-3 py-1 rounded-full shadow-sm font-medium">
-                        {{ $user->roles->pluck('name')->join(', ') }}
-                    </span>
-                </p>
-            </div>
-        </div>
-
-        <!-- Student Information -->
-        @if ($user->hasRole('student') && $user->student)
-            <div class="mt-6">
-                <h3 class="text-lg font-bold text-gray-700 mb-3">📚 Student Information</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-gray-100 p-5 rounded-lg shadow-md">
-                        <p class="text-gray-700"><strong>🆔 NIM:</strong> {{ $user->student->nim }}</p>
-                        <p class="text-gray-700"><strong>🎂 Birth Date:</strong>
-                            {{ \Carbon\Carbon::parse($user->student->birth_date)->format('d M Y') }}
-                        </p>
-                        <p class="text-gray-700"><strong>🧑‍🤝‍🧑 Gender:</strong> {{ ucfirst($user->student->gender) }}</p>
-                        <p class="text-gray-700"><strong>🕌 Religion:</strong> {{ $user->student->religion }}</p>
-                    </div>
-                    <div class="bg-gray-100 p-5 rounded-lg shadow-md">
-                        <p class="text-gray-700"><strong>📞 Phone:</strong> {{ $user->student->phone_number ?? '-' }}</p>
-                        <p class="text-gray-700"><strong>🏠 Address:</strong> {{ $user->student->address }}</p>
-                        <p class="text-gray-700"><strong>🎓 Program:</strong> {{ $user->student->prodi }}</p>
-                        <p class="text-gray-700"><strong>🏫 Class:</strong> {{ $user->student->class }}</p>
-                        <p class="text-gray-700"><strong>📆 Semester:</strong> {{ $user->student->semester }}</p>
-                    </div>
+    <div class="admin-detail-page">
+        <section class="admin-detail-hero admin-surface">
+            <div class="admin-detail-profile">
+                <img src="{{ $user->profile_photo ? asset('storage/' . $user->profile_photo) : asset('images/default-avatar.png') }}" alt="{{ $user->name }}">
+                <div>
+                    <p class="admin-detail-kicker">Users</p>
+                    <h1 class="admin-detail-title">{{ $user->name }}</h1>
+                    <p class="admin-detail-copy">{{ $user->email }} | {{ $user->roles->pluck('name')->join(', ') }}</p>
                 </div>
             </div>
-        @endif
+            <div class="admin-detail-actions">
+                <a href="{{ route('admin.users.edit', $user->id) }}" class="btn-primary">Edit User</a>
+                <a href="{{ route('admin.users.index') }}" class="btn-neutral">Kembali</a>
+            </div>
+        </section>
 
-        <!-- Action Buttons -->
-        <div class="mt-6 flex justify-end space-x-3">
-            <a href="{{ route('admin.users.edit', $user->id) }}"
-                class="flex items-center space-x-2 bg-yellow-500 text-white px-4 py-2 rounded-lg shadow-md hover:bg-yellow-600 transition duration-300 ease-in-out">
-                ✏️ <span>Edit</span>
-            </a>
-            <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
-                onsubmit="return confirm('Are you sure you want to delete this user?');">
-                @csrf @method('DELETE')
-                <button type="submit"
-                    class="flex items-center space-x-2 bg-red-600 text-white px-4 py-2 rounded-lg shadow-md hover:bg-red-700 transition duration-300 ease-in-out">
-                    🗑️ <span>Delete</span>
-                </button>
-            </form>
+        <div class="admin-detail-grid">
+            <section class="admin-card-white admin-detail-card">
+                <h2>Informasi</h2>
+                <div class="admin-detail-info">
+                    <div><span>Nama</span><strong>{{ $user->name }}</strong></div>
+                    <div><span>Email</span><strong>{{ $user->email }}</strong></div>
+                    <div><span>Role</span><strong>{{ $user->roles->pluck('name')->join(', ') }}</strong></div>
+                    <div><span>Status Mahasiswa</span><strong>{{ $student ? 'Ya' : 'Tidak' }}</strong></div>
+                </div>
+            </section>
+
+            @if ($student)
+                <section class="admin-card-white admin-detail-card">
+                    <h2>Mahasiswa</h2>
+                    <div class="admin-detail-info">
+                        <div><span>NIM</span><strong>{{ $student->nim }}</strong></div>
+                        <div><span>Program Studi</span><strong>{{ $student->prodi ?? '-' }}</strong></div>
+                        <div><span>Semester</span><strong>{{ $student->semester ?? '-' }}</strong></div>
+                        <div><span>Kelas</span><strong>{{ $student->class ?? '-' }}</strong></div>
+                        <div><span>Jenis Kelamin</span><strong>{{ $student->gender ?? '-' }}</strong></div>
+                        <div><span>No. Telepon</span><strong>{{ $student->phone_number ?? '-' }}</strong></div>
+                    </div>
+                </section>
+            @endif
         </div>
     </div>
 
-    <!-- Pop-up Modal -->
-    <div id="photoModal"
-        class="fixed inset-0 bg-black bg-opacity-70 hidden flex justify-center items-center z-50 transition-opacity duration-300 ease-in-out">
-        <div
-            class="relative bg-white p-6 rounded-lg shadow-lg transform scale-95 transition-transform duration-300 ease-in-out">
-            <!-- Close Button -->
-            <button id="closeModal"
-                class="absolute top-2 right-2 text-gray-600 text-3xl font-bold hover:text-gray-900 transition duration-200 ease-in-out">
-                ✖
-            </button>
-            <!-- Image -->
-            <img id="modalImage"
-                class="max-w-full max-h-[85vh] rounded-lg shadow-lg transition-transform duration-300 ease-in-out scale-95">
-        </div>
-    </div>
-
-    <script>
-        const profilePhoto = document.getElementById('profilePhoto');
-        const photoModal = document.getElementById('photoModal');
-        const modalImage = document.getElementById('modalImage');
-        const closeModal = document.getElementById('closeModal');
-
-        profilePhoto.addEventListener('click', () => {
-            modalImage.src = profilePhoto.src;
-            photoModal.classList.remove('hidden');
-            setTimeout(() => {
-                photoModal.classList.remove('opacity-0');
-                modalImage.classList.remove('scale-95');
-            }, 10);
-        });
-
-        closeModal.addEventListener('click', closePhotoModal);
-        photoModal.addEventListener('click', (e) => {
-            if (e.target !== modalImage) {
-                closePhotoModal();
-            }
-        });
-
-        function closePhotoModal() {
-            photoModal.classList.add('opacity-0');
-            modalImage.classList.add('scale-95');
-            setTimeout(() => {
-                photoModal.classList.add('hidden');
-            }, 300);
-        }
-    </script>
+    <style>
+        .admin-detail-page { max-width: 1200px; margin: 0 auto; }
+        .admin-detail-hero { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:28px; border-radius:30px; margin-bottom:24px; }
+        .admin-detail-profile { display:flex; align-items:center; gap:18px; }
+        .admin-detail-profile img { width:88px; height:88px; border-radius:999px; object-fit:cover; background:#fff; }
+        .admin-detail-kicker { margin:0; font-size:12px; letter-spacing:.32em; text-transform:uppercase; color:rgba(255,236,242,.72); }
+        .admin-detail-title { margin:10px 0 0; color:#fff; font-size:40px; }
+        .admin-detail-copy { margin:10px 0 0; color:rgba(255,236,242,.75); }
+        .admin-detail-actions { display:flex; gap:12px; flex-wrap:wrap; }
+        .admin-detail-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
+        .admin-detail-card { padding:24px; border-radius:30px; }
+        .admin-detail-card h2 { margin:0 0 18px; color:#1f2937; font-size:28px; }
+        .admin-detail-info { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; }
+        .admin-detail-info div { padding:16px; border-radius:18px; background:#fff7fa; }
+        .admin-detail-info span { display:block; margin-bottom:8px; font-size:12px; letter-spacing:.12em; text-transform:uppercase; color:#94a3b8; }
+        .admin-detail-info strong { color:#1f2937; }
+        .btn-primary, .btn-neutral { display:inline-flex; align-items:center; justify-content:center; padding:14px 18px; border-radius:16px; text-decoration:none; font-weight:700; border:0; color:#fff; }
+        .btn-primary { background:var(--admin-accent); }
+        .btn-neutral { background:#64748b; }
+        @media (max-width:768px) { .admin-detail-hero { flex-direction:column; align-items:stretch; } .admin-detail-grid, .admin-detail-info { grid-template-columns:1fr; } .admin-detail-title { font-size:32px; } }
+    </style>
 @endsection

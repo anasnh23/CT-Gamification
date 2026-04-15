@@ -8,22 +8,136 @@
     <link rel="icon" type="image/png" href="{{ asset('storage/icons/game.png') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <style>
+        body.lecturer-body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background:
+                radial-gradient(circle at top, rgba(244, 114, 182, 0.22), transparent 34%),
+                radial-gradient(circle at right top, rgba(251, 113, 133, 0.18), transparent 28%),
+                linear-gradient(145deg, #220610 0%, #3b1021 46%, #5b1630 100%);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        .lecturer-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .lecturer-main-shell {
+            flex: 1;
+            min-height: 100vh;
+            margin-left: 260px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .lecturer-main-content {
+            padding: 24px;
+            overflow-x: hidden;
+        }
+
+        .lecturer-main-content .bg-white {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(255, 247, 250, 0.95)) !important;
+            border: 1px solid rgba(244, 114, 182, 0.14);
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+        }
+
+        .lecturer-main-content input,
+        .lecturer-main-content select,
+        .lecturer-main-content textarea {
+            background: rgba(255, 251, 252, 0.98) !important;
+            border-color: rgba(190, 24, 93, 0.18) !important;
+        }
+
+        .lecturer-main-content table thead.bg-blue-600,
+        .lecturer-main-content table thead.bg-green-500,
+        .lecturer-main-content table thead.bg-indigo-600 {
+            background: linear-gradient(90deg, #9f1d4f, #d9467a) !important;
+        }
+
+        .lecturer-main-content .bg-blue-600,
+        .lecturer-main-content .hover\:bg-blue-500:hover,
+        .lecturer-main-content .hover\:bg-blue-600:hover {
+            background-color: #c0265f !important;
+        }
+
+        .lecturer-main-content .bg-green-500,
+        .lecturer-main-content .hover\:bg-green-400:hover {
+            background-color: #db2777 !important;
+        }
+
+        .lecturer-main-content .bg-indigo-500,
+        .lecturer-main-content .hover\:bg-indigo-400:hover {
+            background-color: #a21caf !important;
+        }
+
+        .lecturer-main-content .bg-yellow-400,
+        .lecturer-main-content .hover\:bg-yellow-300:hover {
+            background-color: #f59e0b !important;
+        }
+
+        .lecturer-main-shell.is-collapsed {
+            margin-left: 96px;
+        }
+
+        @media (max-width: 768px) {
+            .lecturer-main-shell {
+                margin-left: 96px;
+            }
+
+            .lecturer-main-content {
+                padding: 16px;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-gray-100">
-    <div class="flex">
+<body class="lecturer-body">
+    <div class="lecturer-layout">
         @include('lecturer.layouts.sidebar')
 
-        <div class="flex-1 flex flex-col ml-64">
+        <div id="lecturerMainShell" class="lecturer-main-shell">
             @include('lecturer.layouts.navbar')
 
-            <main class="p-6 overflow-auto">
+            <main class="lecturer-main-content">
                 @yield('content')
                 @yield('scripts')
             </main>
         </div>
     </div>
-</body>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('lecturerSidebar');
+            const mainShell = document.getElementById('lecturerMainShell');
+            const toggle = document.getElementById('lecturerToggle');
+
+            function setCollapsed(collapsed) {
+                if (!sidebar || !mainShell) {
+                    return;
+                }
+
+                sidebar.classList.toggle('is-collapsed', collapsed);
+                mainShell.classList.toggle('is-collapsed', collapsed);
+            }
+
+            const defaultCollapsed = window.innerWidth <= 768;
+            setCollapsed(defaultCollapsed);
+
+            window.addEventListener('resize', function() {
+                if (window.innerWidth <= 768) {
+                    setCollapsed(true);
+                }
+            });
+
+            toggle?.addEventListener('click', function() {
+                const collapsed = sidebar.classList.contains('is-collapsed');
+                setCollapsed(!collapsed);
+            });
+        });
+    </script>
+</body>
 
 </html>

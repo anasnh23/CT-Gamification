@@ -17,7 +17,7 @@ class LecturerStudentController extends Controller
      */
     public function index()
     {
-        $students = Student::with('user')->paginate(10); 
+        $students = Student::with(['user', 'ranks'])->orderByDesc('total_score')->paginate(10);
         return view('lecturer.students.index', compact('students'));
     }
 
@@ -38,34 +38,40 @@ class LecturerStudentController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'nim' => 'required|string|unique:students,nim',
-            'rank' => 'required|string',
             'exp' => 'required|integer|min:0',
+            'prodi' => 'nullable|string|max:25',
+            'semester' => 'nullable|integer|min:1|max:14',
+            'class' => 'nullable|string|max:10',
         ]);
 
         // Create User
         $user = User::create([
-            'name' => $request->name,
+            'name' => trim($request->name),
             'email' => $request->email,
             'password' => Hash::make('password123'), // Default password
         ]);
         $user->assignRole('student');
 
-        // Create Student
-        Student::create([
+        $student = Student::create([
             'user_id' => $user->id,
             'nim' => $request->nim,
-            'rank' => $request->rank,
             'exp' => $request->exp,
+            'prodi' => $request->prodi,
+            'semester' => $request->semester,
+            'class' => $request->class,
         ]);
+        $student->load('ranks');
+        $student->updateRank();
 
-        return redirect()->route('lecturer.students.index')->with('success', 'Student added successfully!');
+        return redirect()->route('lecturer.students.index')->with('success', 'Mahasiswa berhasil ditambahkan.');
     }
 
     public function show(Student $student)
     {
-        $student->load('user'); // pastikan relasi 'user' sudah diload
+        $student->load(['user', 'ranks', 'currentChallenge', 'currentSection']);
 
         $results = ChallengeResult::where('user_id', $student->user_id)
+            ->with('challenge')
             ->orderBy('attempt_number')
             ->get();
 
@@ -105,24 +111,29 @@ class LecturerStudentController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $student->user_id,
             'nim' => 'required|string|unique:students,nim,' . $student->id,
-            'rank' => 'required|string',
             'exp' => 'required|integer|min:0',
+            'prodi' => 'nullable|string|max:25',
+            'semester' => 'nullable|integer|min:1|max:14',
+            'class' => 'nullable|string|max:10',
         ]);
 
         // Update User
         $student->user->update([
-            'name' => $request->name,
+            'name' => trim($request->name),
             'email' => $request->email,
         ]);
 
-        // Update Student
         $student->update([
             'nim' => $request->nim,
-            'rank' => $request->rank,
             'exp' => $request->exp,
+            'prodi' => $request->prodi,
+            'semester' => $request->semester,
+            'class' => $request->class,
         ]);
+        $student->load('ranks');
+        $student->updateRank();
 
-        return redirect()->route('lecturer.students.index')->with('success', 'Student updated successfully!');
+        return redirect()->route('lecturer.students.index')->with('success', 'Mahasiswa berhasil diperbarui.');
     }
 
     /**
@@ -133,6 +144,6 @@ class LecturerStudentController extends Controller
         $student->user->delete(); // Delete related user
         $student->delete();       // Delete student
 
-        return redirect()->route('lecturer.students.index')->with('success', 'Student deleted successfully!');
+        return redirect()->route('lecturer.students.index')->with('success', 'Mahasiswa berhasil dihapus.');
     }
 }

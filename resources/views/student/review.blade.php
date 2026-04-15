@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
@@ -7,82 +7,118 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gradient-to-br from-gray-900 to-black min-h-screen text-white font-sans py-10 px-6">
-
+<body class="bg-gradient-to-br from-[#240812] via-[#451127] to-[#66203d] min-h-screen text-white py-10 px-4">
     <div class="max-w-5xl mx-auto">
-        <h1 class="text-4xl font-extrabold text-yellow-400 mb-10 text-center drop-shadow">🔁 Review Jawaban</h1>
+        <div class="text-center mb-10">
+            <p class="text-sm uppercase tracking-[0.3em] text-amber-300 font-semibold">Review Challenge</p>
+            <h1 class="text-4xl font-bold mt-2">Pelajari pembahasan dan jawaban</h1>
+            <p class="text-rose-100/80 mt-3">Setelah menyelesaikan semua soal, kamu bisa melihat jawabanmu, kunci, dan pembahasan setiap soal di sini.</p>
+        </div>
 
-        @foreach ($answers as $questionId => $answerGroup)
-            @php
-                $question = $answerGroup->first()->question;
-                $isCorrect = $answerGroup->first()->is_correct;
-                $correctAnswers = $question->answers->where('is_correct', true);
-            @endphp
+        <div class="grid md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-[#fff8f8] text-slate-900 rounded-2xl p-4 shadow border border-rose-200/40">
+                <p class="text-sm text-slate-500">Score</p>
+                <p class="text-2xl font-bold text-emerald-600">{{ $result->total_score }}</p>
+            </div>
+            <div class="bg-[#fff8f8] text-slate-900 rounded-2xl p-4 shadow border border-rose-200/40">
+                <p class="text-sm text-slate-500">EXP</p>
+                <p class="text-2xl font-bold text-sky-600">{{ $result->total_exp }}</p>
+            </div>
+            <div class="bg-[#fff8f8] text-slate-900 rounded-2xl p-4 shadow border border-rose-200/40">
+                <p class="text-sm text-slate-500">Benar</p>
+                <p class="text-2xl font-bold text-emerald-600">{{ $result->correct_answers }}</p>
+            </div>
+            <div class="bg-[#fff8f8] text-slate-900 rounded-2xl p-4 shadow border border-rose-200/40">
+                <p class="text-sm text-slate-500">Salah</p>
+                <p class="text-2xl font-bold text-rose-600">{{ $result->wrong_answers }}</p>
+            </div>
+        </div>
 
-            <div
-                class="mb-10 p-6 rounded-2xl shadow-lg border-2 transition-all
-                border-gray-700 hover:bg-gray-900 hover:border-green-400">
+        <div class="space-y-6">
+            @foreach ($answers as $questionId => $answerGroup)
+                @php
+                    $question = $answerGroup->first()->question;
+                    $correctAnswers = $question->answers->where('is_correct', true);
+                    $submittedAnswers = $answerGroup
+                        ->map(fn($answer) => $answer->selectedAnswer?->answer ?? $answer->answer_text ?? $answer->selected_answer)
+                        ->filter()
+                        ->values();
+                    $isCorrect = $answerGroup->first()->is_correct;
+                @endphp
 
-                <!-- Judul Soal -->
-                <div class="mb-4">
-                    <h2 class="text-xl font-bold text-white">Soal {{ $loop->iteration }}</h2>
-                    <p class="mt-2 text-gray-200 leading-relaxed">{{ $question->description }}</p>
+                <section class="bg-[#fff8f8] text-slate-900 rounded-3xl shadow border border-rose-200/40 p-6">
+                    <div class="flex flex-wrap items-start justify-between gap-4">
+                        <div>
+                            <p class="text-sm uppercase tracking-[0.25em] text-slate-400">Soal {{ $loop->iteration }}</p>
+                            <h2 class="text-2xl font-bold mt-2">{{ $question->question_text }}</h2>
+                        </div>
+                        <span
+                            class="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold {{ $isCorrect ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700' }}">
+                            {{ $isCorrect ? 'Jawabanmu benar' : 'Jawabanmu perlu diperbaiki' }}
+                        </span>
+                    </div>
 
-                    @if ($question->question_image)
-                        <img src="{{ asset('storage/' . $question->question_image) }}" alt="Gambar Soal"
-                            class="mt-4 w-full max-h-64 object-contain rounded border border-gray-600 shadow-md">
+                    @if ($question->description)
+                        <div class="mt-4 rounded-2xl bg-slate-50 border border-slate-200 p-4 text-slate-700 leading-7">
+                            {!! nl2br(e($question->description)) !!}
+                        </div>
                     @endif
 
-                    <p class="text-lg font-semibold text-yellow-300 mt-4">❓ {{ $question->question_text }}</p>
-                </div>
+                    @if ($question->question_image)
+                        <div class="mt-4">
+                            <img src="{{ asset('storage/' . $question->question_image) }}" alt="Question Image"
+                                class="max-h-72 rounded-2xl border border-slate-200">
+                        </div>
+                    @endif
 
-                <!-- Jawaban Kamu -->
-                <div class="mt-6">
-                    <h3 class="text-sm font-bold text-white mb-2">📌 Jawaban Kamu:</h3>
-                    <ul class="pl-5 list-disc space-y-2">
-                        @foreach ($answerGroup as $answer)
-                            <li class="text-md {{ $answer->is_correct ? 'text-green-300' : 'text-red-300' }}">
-                                <span
-                                    class="font-medium">{{ $answer->selectedAnswer?->answer ?? $answer->selected_answer }}</span>
-                                @if ($answer->selectedAnswer?->answer_image)
-                                    <img src="{{ asset('storage/' . $answer->selectedAnswer->answer_image) }}"
-                                        alt="Answer Image" class="mt-1 max-w-xs border rounded shadow-sm">
-                                @endif
-                                <span class="ml-2 text-sm">
-                                    {{ $answer->is_correct ? '✅ Benar' : '❌ Salah' }}
-                                </span>
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
+                    <div class="grid md:grid-cols-2 gap-4 mt-6">
+                        <div class="rounded-2xl bg-rose-50 border border-rose-200 p-4">
+                            <p class="text-sm uppercase tracking-[0.2em] text-rose-500 font-semibold mb-2">Jawaban Kamu</p>
+                            @if ($submittedAnswers->isEmpty())
+                                <p class="text-slate-600">Tidak ada jawaban tersimpan.</p>
+                            @else
+                                <ul class="space-y-2 text-slate-700">
+                                    @foreach ($submittedAnswers as $submittedAnswer)
+                                        <li>{{ $submittedAnswer }}</li>
+                                    @endforeach
+                                </ul>
+                            @endif
+                        </div>
 
-                <!-- Jawaban Benar -->
-                <div class="mt-6">
-                    <h3 class="text-sm font-bold text-white mb-2">✅ Jawaban yang Benar:</h3>
-                    <ul class="pl-5 list-disc space-y-2">
-                        @foreach ($correctAnswers as $correct)
-                            <li class="text-green-300">
-                                <span class="font-medium">{{ $correct->answer }}</span>
-                                @if ($correct->answer_image)
-                                    <img src="{{ asset('storage/' . $correct->answer_image) }}"
-                                        alt="Correct Answer Image" class="mt-1 max-w-xs border rounded shadow-sm">
-                                @endif
-                            </li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        @endforeach
+                        <div class="rounded-2xl bg-emerald-50 border border-emerald-200 p-4">
+                            <p class="text-sm uppercase tracking-[0.2em] text-emerald-600 font-semibold mb-2">Jawaban Benar</p>
+                            <ul class="space-y-2 text-slate-700">
+                                @foreach ($correctAnswers as $correctAnswer)
+                                    <li>{{ $correctAnswer->answer }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
 
-        <!-- Tombol Kembali -->
-        <div class="text-center mt-16">
+                    @if ($question->help_text)
+                        <div class="mt-4 rounded-2xl bg-amber-50 border border-amber-200 p-4">
+                            <p class="text-sm uppercase tracking-[0.2em] text-amber-600 font-semibold mb-2">Bantuan yang Bisa Dipakai</p>
+                            <div class="text-slate-700 leading-7">{!! nl2br(e($question->help_text)) !!}</div>
+                        </div>
+                    @endif
+
+                    <div class="mt-4 rounded-2xl bg-sky-50 border border-sky-200 p-4">
+                        <p class="text-sm uppercase tracking-[0.2em] text-sky-600 font-semibold mb-2">Pembahasan</p>
+                        <div class="text-slate-700 leading-7">
+                            {!! nl2br(e($question->explanation_text ?: 'Pembahasan untuk soal ini belum diisi.')) !!}
+                        </div>
+                    </div>
+                </section>
+            @endforeach
+        </div>
+
+        <div class="text-center mt-10">
             <a href="{{ route('student.mission.index') }}"
-                class="bg-yellow-400 hover:bg-yellow-300 text-black px-8 py-4 rounded-xl font-bold shadow-lg text-lg transition">
-                🏠 Kembali ke Misi
+                class="inline-flex items-center rounded-2xl bg-slate-900 text-white px-6 py-3 font-semibold hover:bg-slate-800 transition">
+                Kembali ke Misi
             </a>
         </div>
     </div>
-
 </body>
 
 </html>

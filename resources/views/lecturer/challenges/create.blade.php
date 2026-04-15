@@ -1,70 +1,232 @@
 @extends('lecturer.layouts.app')
 
 @section('content')
-    <h1 class="text-2xl font-bold mb-4">Create New Challenge</h1>
+    <div class="challenge-form-page">
+        <section class="challenge-form-hero">
+            <p class="challenge-form-kicker">Bangun Mission Baru</p>
+            <h1 class="challenge-form-title">Buat challenge pembelajaran</h1>
+            <p class="challenge-form-copy">
+                Challenge mewakili satu mission belajar yang akan dikerjakan mahasiswa. Pilih section tujuan lalu tentukan judul challenge yang jelas dan mudah dipahami.
+            </p>
+        </section>
 
-    @if ($errors->any())
-        <div class="bg-red-100 text-red-700 p-4 rounded mb-4">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
+        @if ($errors->any())
+            <div class="challenge-form-alert">
+                <strong>Data belum bisa disimpan.</strong>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-    <form action="{{ route('lecturer.challenges.store') }}" method="POST" class="bg-white p-6 rounded-lg shadow-md">
-        @csrf
+        <form action="{{ route('lecturer.challenges.store') }}" method="POST" class="challenge-form-card bg-white">
+            @csrf
 
-        <!-- Pilih Section -->
-        <div class="mb-4">
-            <label for="section_id" class="block text-gray-700 font-bold mb-2">Select Section</label>
-            <select name="section_id" id="section_id"
-                class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 p-2" required>
-                <option value="" disabled selected>-- Select Section --</option>
-                @foreach ($sections as $section)
-                    <option value="{{ $section->id }}" {{ $selectedSectionId == $section->id ? 'selected' : '' }}>
-                        {{ $section->order }} - {{ $section->name }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+            <div class="challenge-form-grid">
+                <div>
+                    <label for="section_id" class="challenge-form-label">Section Tujuan</label>
+                    <select name="section_id" id="section_id" class="challenge-form-input" required>
+                        <option value="">Pilih section</option>
+                        @foreach ($sections as $section)
+                            <option value="{{ $section->id }}" {{ (string) $selectedSectionId === (string) $section->id ? 'selected' : '' }}>
+                                {{ $section->order }} - {{ $section->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <p class="challenge-form-hint">Challenge akan tampil di bawah section yang Anda pilih.</p>
+                </div>
 
-        <!-- Title -->
-        <div class="mb-4">
-            <label for="title" class="block text-gray-700 font-bold mb-2">Title</label>
-            <input type="text" name="title" id="title" value="{{ old('title') }}"
-                class="w-full border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200 p-2" required>
-        </div>
+                <div>
+                    <label for="title" class="challenge-form-label">Judul Challenge</label>
+                    <input type="text" name="title" id="title" value="{{ old('title') }}" class="challenge-form-input" required>
+                    <p class="challenge-form-hint">Contoh: Pola dan Urutan, Instruksi Dasar, atau Logika Visual.</p>
+                </div>
+            </div>
 
-        <!-- Total EXP (Disabled) -->
-        <div class="mb-4">
-            <label for="total_exp" class="block text-gray-700 font-bold mb-2">Total EXP</label>
-            <input type="number" name="total_exp" id="total_exp" value="{{ old('total_exp') }}"
-                class="w-full border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-500 p-2" disabled>
-            <p class="text-sm text-gray-500 mt-1">Akan dihitung otomatis berdasarkan total soal</p>
-        </div>
+            <div class="challenge-form-summary">
+                <div class="challenge-summary-box">
+                    <span>Total EXP</span>
+                    <strong>Otomatis</strong>
+                    <small>Dihitung dari total soal dalam challenge.</small>
+                </div>
+                <div class="challenge-summary-box">
+                    <span>Total Score</span>
+                    <strong>Otomatis</strong>
+                    <small>Menyesuaikan akumulasi skor setiap soal.</small>
+                </div>
+            </div>
 
-        <!-- Total Score (Disabled) -->
-        <div class="mb-4">
-            <label for="total_score" class="block text-gray-700 font-bold mb-2">Total Score</label>
-            <input type="number" name="total_score" id="total_score" value="{{ old('total_score') }}"
-                class="w-full border-gray-300 rounded-md shadow-sm bg-gray-100 text-gray-500 p-2" disabled>
-            <p class="text-sm text-gray-500 mt-1">Akan dihitung otomatis berdasarkan total soal</p>
-        </div>
+            <div class="challenge-form-actions">
+                <a href="{{ route('lecturer.challenges.index') }}" class="challenge-form-btn neutral">Kembali</a>
+                <button type="submit" class="challenge-form-btn primary">Simpan Challenge</button>
+            </div>
+        </form>
+    </div>
 
-        <div class="flex justify-between">
-            <!-- Cancel Button -->
-            <a href="{{ route('lecturer.challenges.index') }}"
-                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-400 transition duration-300 ease-in-out">
-                Cancel
-            </a>
+    <style>
+        .challenge-form-page {
+            max-width: 980px;
+            margin: 0 auto;
+        }
 
-            <!-- Create Challenge Button -->
-            <button type="submit"
-                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-500 transition duration-300 ease-in-out">
-                Create Challenge
-            </button>
-        </div>
-    </form>
+        .challenge-form-hero {
+            margin-bottom: 24px;
+            padding: 28px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 228, 236, 0.14);
+            background: rgba(74, 19, 39, 0.78);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+        }
+
+        .challenge-form-kicker {
+            margin: 0;
+            font-size: 12px;
+            letter-spacing: 0.34em;
+            text-transform: uppercase;
+            color: rgba(255, 228, 236, 0.75);
+        }
+
+        .challenge-form-title {
+            margin: 12px 0 0;
+            color: #fff;
+            font-size: 40px;
+            font-weight: 700;
+        }
+
+        .challenge-form-copy {
+            margin: 14px 0 0;
+            color: rgba(255, 240, 244, 0.76);
+            line-height: 1.8;
+            max-width: 760px;
+        }
+
+        .challenge-form-alert {
+            margin-bottom: 16px;
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: rgba(254, 226, 226, 0.96);
+            color: #991b1b;
+        }
+
+        .challenge-form-alert ul {
+            margin: 10px 0 0 18px;
+        }
+
+        .challenge-form-card {
+            padding: 24px;
+            border-radius: 30px;
+        }
+
+        .challenge-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .challenge-form-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #334155;
+            font-weight: 700;
+        }
+
+        .challenge-form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 16px;
+            border: 1px solid #f0b6c9;
+            box-sizing: border-box;
+            color: #1f2937;
+        }
+
+        .challenge-form-hint {
+            margin: 8px 0 0;
+            color: #94a3b8;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .challenge-form-summary {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 22px;
+        }
+
+        .challenge-summary-box {
+            padding: 18px;
+            border-radius: 22px;
+            background: #fff7fa;
+            border: 1px solid #f5c3d6;
+        }
+
+        .challenge-summary-box span {
+            display: block;
+            color: #be185d;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+        }
+
+        .challenge-summary-box strong {
+            display: block;
+            margin-top: 10px;
+            color: #1f2937;
+            font-size: 22px;
+        }
+
+        .challenge-summary-box small {
+            display: block;
+            margin-top: 8px;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .challenge-form-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 14px;
+            margin-top: 24px;
+        }
+
+        .challenge-form-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 18px;
+            border-radius: 16px;
+            text-decoration: none;
+            font-weight: 700;
+            border: 0;
+            cursor: pointer;
+        }
+
+        .challenge-form-btn.neutral {
+            background: #64748b;
+            color: #fff;
+        }
+
+        .challenge-form-btn.primary {
+            background: linear-gradient(90deg, #c0265f, #ec4899);
+            color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            .challenge-form-grid,
+            .challenge-form-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .challenge-form-title {
+                font-size: 32px;
+            }
+
+            .challenge-form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
 @endsection

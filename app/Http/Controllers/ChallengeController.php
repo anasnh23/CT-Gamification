@@ -10,13 +10,17 @@ class ChallengeController extends Controller
 {
     public function index(Request $request)
     {
-        $sections = Section::orderBy('name')->get();
+        $sections = Section::orderBy('order')->get();
 
-        $sectionSearch = $request->input('section_id'); 
+        $sectionSearch = $request->input('section_id');
 
-        $challenges = Challenge::when($sectionSearch, function ($query, $sectionSearch) {
-            return $query->where('section_id', $sectionSearch);
-        })->orderBy('created_at', 'desc')->paginate(10);
+        $challenges = Challenge::with(['section'])->withCount('questions')
+            ->when($sectionSearch, function ($query, $sectionSearch) {
+                return $query->where('section_id', $sectionSearch);
+            })
+            ->orderBy('section_id')
+            ->orderBy('id')
+            ->paginate(10);
 
         return view('lecturer.challenges.index', compact('challenges', 'sections', 'sectionSearch'));
     }
@@ -40,12 +44,12 @@ class ChallengeController extends Controller
 
         Challenge::create([
             'section_id' => $request->section_id,
-            'title' => $request->title,
-            'total_exp' => $request->total_exp,
-            'total_score' => $request->total_score,
+            'title' => trim($request->title),
+            'total_exp' => 0,
+            'total_score' => 0,
         ]);
 
-        return redirect()->route('lecturer.challenges.index')->with('status', 'success');
+        return redirect()->route('lecturer.challenges.index')->with('success', 'Challenge berhasil dibuat.');
     }
 
 
@@ -66,19 +70,15 @@ class ChallengeController extends Controller
         $request->validate([
             'section_id' => 'required|exists:sections,id',
             'title' => 'required|string|max:255',
-            'total_exp' => 'integer|min:0',
-            'total_score' => 'integer|min:0',
         ]);
 
         $challenge = Challenge::findOrFail($id);
         $challenge->update([
             'section_id' => $request->section_id,
-            'title' => $request->title,
-            'total_exp' => $request->total_exp,
-            'total_score' => $request->total_score,
+            'title' => trim($request->title),
         ]);
 
-        return redirect()->route('lecturer.challenges.index')->with('success', 'Challenge updated successfully!');
+        return redirect()->route('lecturer.challenges.index')->with('success', 'Challenge berhasil diperbarui.');
     }
 
 
@@ -89,12 +89,11 @@ class ChallengeController extends Controller
             $title = $challenge->title; // Simpan judul challenge sebelum dihapus
             $challenge->delete();
 
-            // Kirim status dan judul challenge via session flash
             return redirect()->route('lecturer.challenges.index')
-                ->with(['status' => 'delete-success', 'deleted_title' => $title]);
+                ->with('success', "Challenge {$title} berhasil dihapus.");
         } catch (\Exception $e) {
             return redirect()->route('lecturer.challenges.index')
-                ->with('status', 'delete-error');
+                ->with('error', 'Challenge tidak bisa dihapus. Pastikan tidak ada data soal atau hasil yang masih terhubung.');
         }
     }
 }

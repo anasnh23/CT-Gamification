@@ -2,30 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Question;
-use App\Models\Challenge;
 use App\Models\Answer;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Challenge;
+use App\Models\Question;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class QuestionController extends Controller
 {
-    // Display a listing of the questions
     public function index(Request $request)
     {
-        $challenges = Challenge::all();
+        $challenges = Challenge::with('section')->orderBy('section_id')->orderBy('title')->get();
         $selectedChallenge = $request->query('challenge_id');
 
-        if ($selectedChallenge) {
-            $questions = Question::where('challenge_id', $selectedChallenge)
-                ->with('challenge')
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
-        } else {
-            $questions = Question::with('challenge')
-                ->orderBy('created_at', 'desc')
-                ->paginate(10);
-        }
+        $questions = Question::query()
+            ->with(['challenge.section', 'answers'])
+            ->when($selectedChallenge, fn($query) => $query->where('challenge_id', $selectedChallenge))
+            ->orderBy('challenge_id')
+            ->orderBy('id')
+            ->paginate(10);
 
         return view('lecturer.questions.index', compact('questions', 'challenges', 'selectedChallenge'));
     }
@@ -33,211 +28,187 @@ class QuestionController extends Controller
     public function show($id)
     {
         $question = Question::with('answers', 'challenge')->findOrFail($id);
+
         return view('lecturer.questions.show', compact('question'));
     }
 
-    // Show the form for creating a new question
-    public function create()
+    public function create(Request $request)
     {
-        $challenges = Challenge::all();
-        return view('lecturer.questions.create', compact('challenges'));
+        $challenges = Challenge::with('section')->orderBy('section_id')->orderBy('title')->get();
+        $selectedChallengeId = $request->query('challenge_id');
+
+        return view('lecturer.questions.create', compact('challenges', 'selectedChallengeId'));
     }
 
-    // Store a newly created question in storage
     public function store(Request $request)
     {
-        $request->validate([
-            'challenge_id'    => 'required|exists:challenges,id',
-            'type'            => 'required|in:multiple_choice,true_false,essay',
-            'description'     => 'nullable|string',
-            'question_text'   => 'required|string',
-            'score'           => 'required|integer',
-            'exp'             => 'required|integer',
-            'question_image'  => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp',
-            'answers'         => 'required_if:type,multiple_choice,essay|array',
-            'is_correct'      => 'nullable|array',
-            'answer_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp',
-            'correct_answer'  => 'required_if:type,true_false|in:true,false',
-        ]);
+        $validated = $this->validateQuestion($request);
 
-        // Simpan data pertanyaan
-        $data = $request->only(['challenge_id', 'type', 'description', 'question_text', 'score', 'exp']);
+        $data = collect($validated)->only([
+            'challenge_id',
+            'type',
+            'description',
+            'question_text',
+            'help_text',
+            'explanation_text',
+            'score',
+            'exp',
+        ])->toArray();
+        $data['description'] = trim((string) ($data['description'] ?? ''));
+        $data['question_text'] = trim((string) $data['question_text']);
+        $data['help_text'] = trim((string) ($data['help_text'] ?? ''));
+        $data['explanation_text'] = trim((string) ($data['explanation_text'] ?? ''));
 
         if ($request->hasFile('question_image')) {
             $data['question_image'] = $request->file('question_image')->store('questions', 'public');
         }
 
         $question = Question::create($data);
+        $this->syncAnswers($request, $question);
         $question->challenge->recalculateTotals();
 
-        // Handling berdasarkan tipe soal
-        if ($request->type === 'true_false') {
-            // Simpan jawaban True dan False dengan is_correct sesuai pilihan
-            Answer::create([
-                'question_id' => $question->id,
-                'answer'      => 'True',
-                'is_correct'  => $request->correct_answer === "true" ? 1 : 0,
-            ]);
-
-            Answer::create([
-                'question_id' => $question->id,
-                'answer'      => 'False',
-                'is_correct'  => $request->correct_answer === "false" ? 1 : 0,
-            ]);
-        } elseif ($request->type === 'multiple_choice') {
-            foreach ($request->answers as $index => $answer) {
-                $answerData = [
-                    'question_id' => $question->id,
-                    'answer'      => $answer,
-                    'is_correct'  => isset($request->is_correct[$index]) && $request->is_correct[$index] == "1" ? 1 : 0,
-                ];
-
-                if ($request->hasFile("answer_images.$index")) {
-                    $answerData['answer_image'] = $request->file("answer_images.$index")->store('answers', 'public');
-                }
-
-                Answer::create($answerData);
-            }
-        } elseif ($request->type === 'essay') {
-            Answer::create([
-                'question_id' => $question->id,
-                'answer'      => $request->answers[0],
-                'is_correct'  => 1,
-            ]);
-        }
-
-        return redirect()->route('lecturer.questions.index')->with('success', 'Question created successfully!');
+        return redirect()->route('lecturer.questions.index')->with('success', 'Soal berhasil dibuat.');
     }
 
-    // Show the form for editing the specified question
     public function edit($id)
     {
-        $question = Question::findOrFail($id);
-        $challenges = Challenge::all();
+        $question = Question::with('answers')->findOrFail($id);
+        $challenges = Challenge::with('section')->orderBy('section_id')->orderBy('title')->get();
+
         return view('lecturer.questions.edit', compact('question', 'challenges'));
     }
 
-    // Update the specified question in storage
     public function update(Request $request, Question $question)
     {
-        $request->validate([
-            'challenge_id'    => 'required|exists:challenges,id',
-            'type'            => 'required|in:multiple_choice,true_false,essay',
-            'description'     => 'nullable|string',
-            'question_text'   => 'required|string',
-            'score'           => 'required|integer',
-            'exp'             => 'required|integer',
-            'question_image'  => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'answers'         => 'required_if:type,multiple_choice,essay|array',
-            'is_correct'      => 'nullable|array',
-            'answer_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'correct_answer'  => 'required_if:type,true_false|in:true,false', // Untuk True/False
-        ]);
+        $validated = $this->validateQuestion($request);
 
-        // Update data pertanyaan
-        $data = $request->only(['challenge_id', 'type', 'description', 'question_text', 'score', 'exp']);
+        $data = collect($validated)->only([
+            'challenge_id',
+            'type',
+            'description',
+            'question_text',
+            'help_text',
+            'explanation_text',
+            'score',
+            'exp',
+        ])->toArray();
+        $data['description'] = trim((string) ($data['description'] ?? ''));
+        $data['question_text'] = trim((string) $data['question_text']);
+        $data['help_text'] = trim((string) ($data['help_text'] ?? ''));
+        $data['explanation_text'] = trim((string) ($data['explanation_text'] ?? ''));
 
-        // **🔴 Hapus question image jika user memilih delete**
-        if ($request->has('delete_question_image') && $request->delete_question_image == "1") {
-            if ($question->question_image && Storage::disk('public')->exists($question->question_image)) {
-                Storage::disk('public')->delete($question->question_image);
-            }
+        if ($request->boolean('delete_question_image') && $question->question_image) {
+            Storage::disk('public')->delete($question->question_image);
             $data['question_image'] = null;
         }
 
-        // **🔴 Jika ada gambar baru, hapus yang lama & simpan yang baru**
         if ($request->hasFile('question_image')) {
-            if ($question->question_image && Storage::disk('public')->exists($question->question_image)) {
+            if ($question->question_image) {
                 Storage::disk('public')->delete($question->question_image);
             }
+
             $data['question_image'] = $request->file('question_image')->store('questions', 'public');
-        } else {
+        } elseif (! array_key_exists('question_image', $data)) {
             $data['question_image'] = $question->question_image;
         }
 
+        $question->answers()->delete();
         $question->update($data);
 
-        // **🔴 Hapus jawaban lama & gambar terkait**
-        foreach ($question->answers as $answer) {
-            // **🔴 Hapus gambar jawaban jika user memilih delete**
-            if (!empty($request->delete_answer_images[$answer->id]) && $request->delete_answer_images[$answer->id] == "1") {
-                if (!empty($answer->answer_image) && Storage::disk('public')->exists($answer->answer_image)) {
-                    Storage::disk('public')->delete($answer->answer_image);
-                }
-                $answer->update(['answer_image' => null]);
-            }
-        }
-
-        $question->answers()->delete();
-
-        $question->update($data);
-
-        // Hapus jawaban lama sebelum update
-        $question->answers()->delete();
-
-        // Handling berdasarkan tipe soal
-        if ($request->type === 'true_false') {
-            // Simpan jawaban True dan False
-            Answer::create([
-                'question_id' => $question->id,
-                'answer'      => 'True',
-                'is_correct'  => $request->correct_answer === "true" ? 1 : 0,
-            ]);
-
-            Answer::create([
-                'question_id' => $question->id,
-                'answer'      => 'False',
-                'is_correct'  => $request->correct_answer === "false" ? 1 : 0,
-            ]);
-        } elseif ($request->type === 'multiple_choice') {
-            foreach ($request->answers as $index => $answer) {
-                $answerData = [
-                    'question_id' => $question->id,
-                    'answer'      => $answer,
-                    'is_correct'  => isset($request->is_correct[$index]) && $request->is_correct[$index] == "1" ? 1 : 0,
-                ];
-
-                if ($request->hasFile("answer_images.$index")) {
-                    $answerData['answer_image'] = $request->file("answer_images.$index")->store('answers', 'public');
-                } else {
-                    $answerData['answer_image'] = $question->answers[$index]->answer_image;
-                }
-
-                Answer::create($answerData);
-            }
-        } elseif ($request->type === 'essay') {
-            // Essay hanya memiliki satu jawaban tanpa opsi benar/salah
-            Answer::create([
-                'question_id' => $question->id,
-                'answer'      => $request->answers[0],
-                'is_correct'  => 1,
-            ]);
-        }
+        $this->syncAnswers($request, $question);
         $question->challenge->recalculateTotals();
 
-        return redirect()->route('lecturer.questions.index')->with('success', 'Question updated successfully!');
+        return redirect()->route('lecturer.questions.index')->with('success', 'Soal berhasil diperbarui.');
     }
 
-    // Remove the specified question from storage
     public function destroy($id)
     {
-        $question = Question::findOrFail($id);
+        $question = Question::with('answers', 'challenge')->findOrFail($id);
 
-        if ($question->question_image && Storage::disk('public')->exists($question->question_image)) {
+        if ($question->question_image) {
             Storage::disk('public')->delete($question->question_image);
         }
 
         foreach ($question->answers as $answer) {
-            if ($answer->answer_image && Storage::disk('public')->exists($answer->answer_image)) {
+            if ($answer->answer_image) {
                 Storage::disk('public')->delete($answer->answer_image);
             }
         }
 
+        $challenge = $question->challenge;
         $question->answers()->delete();
         $question->delete();
+        $challenge?->recalculateTotals();
 
-        $question->challenge->recalculateTotals();
+        return redirect()->route('lecturer.questions.index')->with('success', 'Soal berhasil dihapus.');
+    }
 
-        return redirect()->route('lecturer.questions.index')->with('error', 'Question deleted successfully.');
+    protected function validateQuestion(Request $request): array
+    {
+        return $request->validate([
+            'challenge_id' => 'required|exists:challenges,id',
+            'type' => 'required|in:multiple_choice,true_false,essay',
+            'description' => 'nullable|string',
+            'question_text' => 'required|string',
+            'help_text' => 'nullable|string',
+            'explanation_text' => 'nullable|string',
+            'score' => 'required|integer|min:0',
+            'exp' => 'required|integer|min:0',
+            'question_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'answers' => 'required_if:type,multiple_choice,essay|array',
+            'answers.*' => 'nullable|string',
+            'is_correct' => 'nullable|array',
+            'answer_images.*' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'correct_answer' => 'required_if:type,true_false|in:true,false',
+        ]);
+    }
+
+    protected function syncAnswers(Request $request, Question $question): void
+    {
+        if ($request->type === 'true_false') {
+            Answer::create([
+                'question_id' => $question->id,
+                'answer' => 'True',
+                'is_correct' => $request->correct_answer === 'true',
+            ]);
+
+            Answer::create([
+                'question_id' => $question->id,
+                'answer' => 'False',
+                'is_correct' => $request->correct_answer === 'false',
+            ]);
+
+            return;
+        }
+
+        if ($request->type === 'essay') {
+            Answer::create([
+                'question_id' => $question->id,
+                'answer' => $request->answers[0] ?? '',
+                'is_correct' => true,
+            ]);
+
+            return;
+        }
+
+        foreach ($request->answers as $index => $answerText) {
+            if (blank($answerText) && ! $request->hasFile("answer_images.$index")) {
+                continue;
+            }
+
+            $answerData = [
+                'question_id' => $question->id,
+                'answer' => $answerText,
+                'is_correct' => isset($request->is_correct[$index]) && (string) $request->is_correct[$index] === '1',
+            ];
+
+            if ($request->hasFile("answer_images.$index")) {
+                $answerData['answer_image'] = $request->file("answer_images.$index")->store('answers', 'public');
+            } elseif (! empty($request->old_answer_images[$index])) {
+                $answerData['answer_image'] = $request->old_answer_images[$index];
+            }
+
+            Answer::create($answerData);
+        }
     }
 }

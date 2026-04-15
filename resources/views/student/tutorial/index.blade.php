@@ -2,258 +2,238 @@
 
 @section('content')
     <div class="animate-fadeIn">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-3xl font-bold text-center text-yellow-500 mb-6">Tutorial Penggunaan Sistem</h1>
-
-            <!-- Animated Toggle Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div onclick="showSoal(); playClick()"
-                    class="cursor-pointer bg-gradient-to-br from-indigo-700 to-purple-700 p-6 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 border-2 border-transparent hover:border-yellow-400 hover:shadow-yellow-300 text-center text-white hover-sfx">
-                    <div class="text-5xl mb-2 animate-pulse">🧠</div>
-                    <h3 class="text-xl font-bold">Tutorial Pengerjaan Soal</h3>
-                    <p class="text-sm text-gray-200 mt-1">Belajar cara menjawab berbagai jenis soal</p>
-                </div>
-
-                <div onclick="showProfil(); playClick()"
-                    class="cursor-pointer bg-gradient-to-br from-teal-700 to-green-700 p-6 rounded-xl shadow-xl transform hover:scale-105 transition duration-300 border-2 border-transparent hover:border-yellow-400 hover:shadow-yellow-300 text-center text-white hover-sfx">
-                    <div class="text-5xl mb-2 animate-pulse">👤</div>
-                    <h3 class="text-xl font-bold">Tutorial Edit Profil</h3>
-                    <p class="text-sm text-gray-200 mt-1">Panduan mengubah informasi akun dengan mudah</p>
-                </div>
-            </div>
-
-            <!-- Soal Tutorial Section -->
-            <div id="soal-section" class="tutorial-section">
-                <div class="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
-                    <h2 class="text-2xl text-yellow-300 font-semibold">Pengerjaan Soal</h2>
-                    <p class="text-white mt-4">Berikut adalah cara mengerjakan berbagai jenis soal dalam sistem kami:</p>
-                    <h3 class="text-xl text-yellow-400 mt-4">🔁 Memulai atau Mengulang Misi</h3>
-                    <p class="text-white mt-2">
-                        Pada setiap challenge, Anda akan melihat tombol <strong>"🚀 START MISSION"</strong> jika Anda belum
-                        menyelesaikan semua soal dengan benar.
-                        Jika Anda telah menjawab semua soal dengan benar sebelumnya, tombol akan berubah menjadi <strong>"🔁
-                            REVIEW"</strong>.
-                        Tombol ini akan mengarahkan Anda untuk meninjau kembali jawaban-jawaban sebelumnya dan melihat mana
-                        yang
-                        benar atau salah.
+        <div class="mx-auto max-w-6xl px-4 py-10">
+            <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+                <section class="rounded-[32px] border border-pink-200/20 bg-[#4a1327] p-8 text-white shadow-2xl">
+                    <p class="text-sm font-semibold uppercase tracking-[0.35em] text-pink-200/75">Tutorial Belajar</p>
+                    <h1 class="mt-3 text-4xl font-bold leading-tight">Pelajari alur sistem sebelum mulai mengerjakan mission</h1>
+                    <p class="mt-4 max-w-2xl text-rose-100/80 leading-7">
+                        Tutorial ini dirancang seperti panduan misi. Mahasiswa bisa memahami cara bermain, cara belajar dari
+                        bantuan, dan cara membaca progres tanpa harus bingung dengan terlalu banyak aturan sekaligus.
                     </p>
-                    <div class="bg-gray-900 p-4 rounded-lg mt-4 flex gap-4 flex-wrap justify-center items-center relative">
-                        <button
-                            class="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-6 py-3 rounded-lg shadow hover:scale-105 transform transition font-bold">
-                            🚀 START MISSION
-                        </button>
 
-                        <div class="w-[2px] h-12 bg-white/60 rotate-12"></div>
-
-                        <button
-                            class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-400 hover:scale-105 transform transition font-bold">
-                            🔁 REVIEW
-                        </button>
-                    </div>
-
-
-                    <h3 class="text-xl text-yellow-400 mt-4">A. Pilihan Ganda (Jawaban Banyak)</h3>
-                    <p class="text-white mt-2">
-                        Pada soal pilihan ganda dengan banyak jawaban, Anda bisa memilih lebih dari satu jawaban yang benar.
-                        Pilihlah jawaban dengan cara mengklik pada kotak pilihan. Setelah memilih, klik tombol
-                        <strong>Submit
-                            Answer</strong> untuk mengirimkan jawaban Anda.
-                    </p>
-                    <div class="bg-gray-900 p-4 rounded-lg mt-4">
-                        <h4 class="text-yellow-300 font-semibold">Contoh</h4>
-                        <p class="text-white">Pilih jawaban yang benar untuk pertanyaan berikut:</p>
-                        <div class="grid grid-cols-2 gap-4 mt-4">
-                            <div class="space-y-4">
-                                <button
-                                    class="answer-btn-multi bg-gray-200 text-gray-800 p-3 rounded-lg text-lg font-semibold hover:bg-blue-500 transition transform hover:scale-105 shadow-lg w-full">
-                                    Jawaban 1
-                                </button>
-                                <button
-                                    class="answer-btn-multi bg-gray-200 text-gray-800 p-3 rounded-lg text-lg font-semibold hover:bg-blue-500 transition transform hover:scale-105 shadow-lg w-full">
-                                    Jawaban 3
-                                </button>
-                            </div>
-                            <div class="space-y-4">
-                                <button
-                                    class="answer-btn-multi bg-gray-200 text-gray-800 p-3 rounded-lg text-lg font-semibold hover:bg-blue-500 transition transform hover:scale-105 shadow-lg w-full">
-                                    Jawaban 2
-                                </button>
-                                <button
-                                    class="answer-btn-multi bg-gray-200 text-gray-800 p-3 rounded-lg text-lg font-semibold hover:bg-blue-500 transition transform hover:scale-105 shadow-lg w-full">
-                                    Jawaban 4
-                                </button>
-                            </div>
+                    <div class="mt-8 grid gap-4 sm:grid-cols-3">
+                        <div class="rounded-2xl bg-white/10 p-4">
+                            <p class="text-xs uppercase tracking-[0.2em] text-pink-100/70">Langkah 1</p>
+                            <p class="mt-2 text-lg font-semibold">Pilih Mission</p>
+                            <p class="mt-2 text-sm text-rose-100/75">Mulai dari mission yang terang atau sudah terbuka.</p>
                         </div>
-                        <!-- Tombol Submit Answer -->
-                        <button onclick="#"
-                            class="mt-4 bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-400 transition transform hover:scale-105 w-full">
-                            ✅ Submit Answer
+                        <div class="rounded-2xl bg-white/10 p-4">
+                            <p class="text-xs uppercase tracking-[0.2em] text-pink-100/70">Langkah 2</p>
+                            <p class="mt-2 text-lg font-semibold">Kerjakan Soal</p>
+                            <p class="mt-2 text-sm text-rose-100/75">Jawab soal satu per satu dan gunakan bantuan bila perlu.</p>
+                        </div>
+                        <div class="rounded-2xl bg-white/10 p-4">
+                            <p class="text-xs uppercase tracking-[0.2em] text-pink-100/70">Langkah 3</p>
+                            <p class="mt-2 text-lg font-semibold">Review Hasil</p>
+                            <p class="mt-2 text-sm text-rose-100/75">Pelajari pembahasan agar strategi berpikir makin kuat.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="rounded-[32px] border border-rose-200/40 bg-[#fff8f8] p-7 text-slate-900 shadow-xl">
+                    <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rose-500">Peta Panduan</p>
+                    <div class="mt-5 space-y-4">
+                        <button type="button" onclick="showTutorialTab('mission')"
+                            class="tutorial-tab w-full rounded-2xl border border-pink-200 bg-gradient-to-r from-white to-rose-50 px-5 py-4 text-left transition hover:scale-[1.01]"
+                            data-tab="mission">
+                            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-rose-400">Modul 1</p>
+                            <p class="mt-1 text-xl font-bold">Memulai Mission</p>
+                            <p class="mt-2 text-sm text-slate-500">Memahami mission, unlock, dan popup detail challenge.</p>
+                        </button>
+
+                        <button type="button" onclick="showTutorialTab('question')"
+                            class="tutorial-tab w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left transition hover:scale-[1.01]"
+                            data-tab="question">
+                            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-sky-500">Modul 2</p>
+                            <p class="mt-1 text-xl font-bold">Mengerjakan Soal</p>
+                            <p class="mt-2 text-sm text-slate-500">Pilihan ganda, esai, bantuan, dan jawab ulang.</p>
+                        </button>
+
+                        <button type="button" onclick="showTutorialTab('profile')"
+                            class="tutorial-tab w-full rounded-2xl border border-slate-200 bg-white px-5 py-4 text-left transition hover:scale-[1.01]"
+                            data-tab="profile">
+                            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-500">Modul 3</p>
+                            <p class="mt-1 text-xl font-bold">Profil dan Progres</p>
+                            <p class="mt-2 text-sm text-slate-500">Cara membaca rank, score, streak, dan achievement.</p>
                         </button>
                     </div>
-
-                    <h3 class="text-xl text-yellow-400 mt-4">B. Pilihan Ganda (Jawaban Satu)</h3>
-                    <p class="text-white mt-2">
-                        Pada soal pilihan ganda dengan satu jawaban, hanya satu pilihan yang benar. Pilihlah jawaban yang
-                        Anda
-                        anggap benar untuk menjawab.
-                    </p>
-                    <div class="bg-gray-900 p-4 rounded-lg mt-4">
-                        <h4 class="text-yellow-300 font-semibold">Contoh</h4>
-                        <p class="text-white">Pilih jawaban yang benar untuk pertanyaan berikut:</p>
-                        <button
-                            class="answer-btn bg-gray-200 text-gray-800 p-4 rounded-lg text-lg font-semibold hover:bg-blue-500 transition transform hover:scale-105 shadow-lg">
-                            Jawaban A
-                        </button>
-                        <button
-                            class="answer-btn bg-gray-200 text-gray-800 p-4 rounded-lg text-lg font-semibold hover:bg-blue-500 transition transform hover:scale-105 shadow-lg">
-                            Jawaban B
-                        </button>
-                        <button
-                            class="answer-btn bg-gray-200 text-gray-800 p-4 rounded-lg text-lg font-semibold hover:bg-blue-500 transition transform hover:scale-105 shadow-lg">
-                            Jawaban C
-                        </button>
-                    </div>
-
-                    <h3 class="text-xl text-yellow-400 mt-4">C. Soal Essay</h3>
-                    <p class="text-white mt-2">
-                        Pada soal essay, Anda akan diminta untuk mengetikkan jawaban Anda di dalam sebuah
-                        <strong>textarea</strong>.
-                        Setelah menulis jawaban, klik tombol <strong>Submit Answer</strong> untuk mengirimkan jawaban Anda.
-                    </p>
-                    <div class="bg-gray-900 p-4 rounded-lg mt-4">
-                        <h4 class="text-yellow-300 font-semibold">Contoh</h4>
-                        <textarea class="w-full p-3 text-white bg-gray-800 rounded-lg" placeholder="Tulis jawaban Anda disini..."></textarea>
-                        <button
-                            class="bg-blue-500 text-white px-6 py-3 mt-3 rounded-lg shadow-md hover:bg-blue-400 transition transform hover:scale-105">
-                            Submit Answer
-                        </button>
-                    </div>
-
-                    <h3 class="text-xl text-yellow-400 mt-4">D. Soal True/False</h3>
-                    <p class="text-white mt-2">
-                        Pada soal True/False, Anda hanya perlu memilih apakah pernyataan tersebut benar atau salah.
-                        Pilih salah satu jawaban untuk menjawab.
-                    </p>
-                    <div class="bg-gray-900 p-4 rounded-lg mt-4">
-                        <button
-                            class="answer-btn bg-green-600 text-white p-4 rounded-lg text-lg font-semibold hover:bg-green-800 transition transform hover:scale-105 shadow-lg">
-                            ✅ True
-                        </button>
-                        <button
-                            class="answer-btn bg-red-600 text-white p-4 rounded-lg text-lg font-semibold hover:bg-red-800 transition transform hover:scale-105 shadow-lg">
-                            ❌ False
-                        </button>
-                    </div>
-                    <h3 class="text-xl text-yellow-400 mt-6">📊 Halaman Ringkasan (Summary)</h3>
-                    <p class="text-white mt-2">
-                        Setelah kamu menyelesaikan semua soal dalam challenge, kamu akan diarahkan ke halaman
-                        <strong>Challenge
-                            Summary</strong>.
-                        Di sana kamu bisa melihat durasi waktu pengerjaan, total skor, EXP yang didapat, jumlah jawaban
-                        benar
-                        dan salah, serta pesan motivasi yang menyemangati.
-                    </p>
-                    <p class="text-white mt-2">
-                        Pada bagian bawah halaman summary, kamu akan menemukan dua tombol:
-                    </p>
-                    <ul class="list-disc list-inside text-white mt-2">
-                        <li><strong>🏠 Missions:</strong> Untuk kembali ke daftar challenge yang tersedia.</li>
-                        <li><strong>🔁 Retry / Review:</strong>
-                            <ul class="list-disc list-inside ml-4">
-                                <li><strong>Retry:</strong> Akan muncul jika kamu belum menjawab semua soal dengan benar,
-                                    dan
-                                    memungkinkanmu mengulang challenge.</li>
-                                <li><strong>Review:</strong> Akan muncul jika kamu berhasil menjawab semua soal dengan
-                                    benar,
-                                    untuk melihat kembali jawaban kamu.</li>
-                            </ul>
-                        </li>
-                    </ul>
-
-                    <div class="bg-gray-900 p-4 rounded-lg mt-4 flex gap-4 flex-wrap justify-center">
-                        <button
-                            class="bg-yellow-400 text-black px-6 py-3 rounded-lg shadow hover:bg-yellow-300 transform hover:scale-105 transition font-bold">
-                            🏠 Missions
-                        </button>
-                        <button
-                            class="bg-blue-500 text-white px-6 py-3 rounded-lg shadow hover:bg-blue-400 transform hover:scale-105 transition font-bold">
-                            🔁 Retry / Review
-                        </button>
-                    </div>
-
-                </div>
+                </section>
             </div>
 
-            <!-- Profil Tutorial Section -->
-            <div id="profil-section" class="tutorial-section hidden">
-                <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-                    <h2 class="text-2xl text-yellow-300 font-semibold">Edit Profil Mahasiswa</h2>
-                    <p class="text-white mt-4">
-                        Menu <strong>Edit Profil</strong> memungkinkan kamu untuk memperbarui informasi pribadi secara
-                        langsung
-                        melalui sistem.
-                        Berikut adalah hal-hal yang bisa kamu ubah dan cara melakukannya:
-                    </p>
-
-                    <ul class="mt-4 space-y-3 text-white text-sm">
-                        <li>
-                            ✅ <strong>Foto Profil:</strong> Klik tombol "Upload Foto" untuk mengganti gambar profil.
-                            Disarankan
-                            menggunakan foto formal dengan format JPG atau PNG.
-                        </li>
-                        <li>
-                            🏠 <strong>Alamat Rumah:</strong> Masukkan alamat tempat tinggal terbaru agar data kamu tetap
-                            valid.
-                        </li>
-                        <li>
-                            🎂 <strong>Tanggal Lahir:</strong> Pastikan sesuai dengan data asli. Klik pada field kalender
-                            untuk
-                            memilih tanggal.
-                        </li>
-                        <li>
-                            🕌 <strong>Agama:</strong> Pilih dari dropdown menu sesuai keyakinan kamu.
-                        </li>
-                        <li>
-                            🚻 <strong>Jenis Kelamin:</strong> Pilih antara "Laki-laki" atau "Perempuan" pada menu pilihan.
-                        </li>
-                        <li>
-                            📞 <strong>Nomor Telepon:</strong> Masukkan nomor aktif yang bisa dihubungi, format Indonesia
-                            (+62)
-                            atau dimulai dengan 0.
-                        </li>
-                        <li>
-                            🎓 <strong>Program Studi:</strong> Pilih jurusan atau prodi kamu saat ini dari daftar yang
-                            tersedia.
-                        </li>
-                        <li>
-                            📚 <strong>Semester:</strong> Masukkan semester saat ini (contoh: 4 untuk semester empat).
-                        </li>
-                    </ul>
-
-                    <p class="text-white mt-4">
-                        Setelah selesai mengisi atau memperbarui informasi, jangan lupa klik tombol <strong>Save</strong>
-                        agar
-                        data kamu tersimpan dengan benar.
-                        Perubahan akan langsung tercermin di halaman profil kamu.
-                    </p>
-
-                    <div class="mt-6 text-center">
-                        <a href="{{ route('student.profile.edit') }}"
-                            class="bg-yellow-400 text-black px-6 py-2 rounded-lg font-semibold shadow hover:bg-yellow-300 transition inline-block">
-                            👤 Buka Halaman Edit Profil
+            <div class="mt-8 space-y-6">
+                <section id="tutorial-mission" class="tutorial-panel rounded-[32px] border border-rose-200/40 bg-[#fff8f8] p-7 text-slate-900 shadow-xl">
+                    <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                        <div>
+                            <p class="text-sm font-semibold uppercase tracking-[0.25em] text-rose-500">Modul 1</p>
+                            <h2 class="mt-2 text-3xl font-bold">Cara Memulai Mission</h2>
+                            <p class="mt-3 max-w-3xl text-slate-600 leading-7">
+                                Halaman mission adalah pusat progres belajar. Di sana mahasiswa melihat section yang sedang
+                                terbuka, mission yang sudah selesai, dan mission berikutnya yang siap dikerjakan.
+                            </p>
+                        </div>
+                        <a href="{{ route('student.mission.index') }}"
+                            class="inline-flex items-center rounded-2xl bg-gradient-to-r from-pink-600 to-rose-500 px-5 py-3 font-semibold text-white shadow-lg transition hover:scale-[1.02]">
+                            Buka Missions
                         </a>
                     </div>
-                </div>
+
+                    <div class="mt-6 grid gap-4 md:grid-cols-3">
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Status 1</p>
+                            <p class="mt-2 text-xl font-bold">Mission Terang</p>
+                            <p class="mt-2 text-sm leading-6 text-slate-600">Mission yang terang berarti sudah terbuka dan bisa mulai dikerjakan.</p>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Status 2</p>
+                            <p class="mt-2 text-xl font-bold">Mission Selesai</p>
+                            <p class="mt-2 text-sm leading-6 text-slate-600">Mission yang selesai menunjukkan progres belajar yang sudah dituntaskan.</p>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Status 3</p>
+                            <p class="mt-2 text-xl font-bold">Mission Terkunci</p>
+                            <p class="mt-2 text-sm leading-6 text-slate-600">Mission terkunci akan terbuka setelah mission sebelumnya benar-benar selesai.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 rounded-[28px] border border-pink-200 bg-gradient-to-r from-rose-50 to-pink-50 p-6">
+                        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-rose-500">Alur Singkat</p>
+                        <ol class="mt-4 space-y-3 text-slate-700">
+                            <li>1. Klik mission yang sudah terbuka.</li>
+                            <li>2. Baca ringkasan challenge pada popup detail mission.</li>
+                            <li>3. Tekan tombol mulai untuk masuk ke soal.</li>
+                            <li>4. Setelah semua soal selesai, kembali ke mission untuk membuka progres berikutnya.</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <section id="tutorial-question" class="tutorial-panel hidden rounded-[32px] border border-rose-200/40 bg-[#fff8f8] p-7 text-slate-900 shadow-xl">
+                    <p class="text-sm font-semibold uppercase tracking-[0.25em] text-sky-500">Modul 2</p>
+                    <h2 class="mt-2 text-3xl font-bold">Cara Mengerjakan Soal</h2>
+                    <p class="mt-3 max-w-3xl text-slate-600 leading-7">
+                        Bagian ini menjelaskan alur menjawab soal dengan konsep belajar bertahap. Sistem tidak hanya menilai,
+                        tetapi juga membantu mahasiswa memahami strategi penyelesaiannya.
+                    </p>
+
+                    <div class="mt-6 grid gap-4 xl:grid-cols-2">
+                        <div class="rounded-[28px] border border-slate-200 bg-slate-50 p-6">
+                            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-slate-400">Jenis Soal</p>
+                            <div class="mt-4 space-y-4">
+                                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                                    <p class="font-semibold">Pilihan Ganda Satu Jawaban</p>
+                                    <p class="mt-2 text-sm text-slate-600">Pilih satu opsi yang paling tepat, lalu sistem langsung memeriksa hasilnya.</p>
+                                </div>
+                                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                                    <p class="font-semibold">Pilihan Ganda Banyak Jawaban</p>
+                                    <p class="mt-2 text-sm text-slate-600">Pilih beberapa opsi, lalu tekan tombol submit untuk mengecek kombinasi jawaban.</p>
+                                </div>
+                                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                                    <p class="font-semibold">Essay</p>
+                                    <p class="mt-2 text-sm text-slate-600">Tulis jawaban dalam bentuk teks, lalu sistem mencocokkan dengan kunci jawaban.</p>
+                                </div>
+                                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                                    <p class="font-semibold">True / False</p>
+                                    <p class="mt-2 text-sm text-slate-600">Pilih apakah pernyataan benar atau salah.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rounded-[28px] border border-pink-200 bg-gradient-to-br from-rose-50 to-pink-50 p-6">
+                            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-rose-500">Strategi Belajar</p>
+                            <div class="mt-4 space-y-4">
+                                <div class="rounded-2xl bg-white/80 p-4 border border-rose-100">
+                                    <p class="font-semibold">1. Jawab dulu</p>
+                                    <p class="mt-2 text-sm text-slate-600">Mahasiswa mencoba menjawab berdasarkan pemahaman sendiri.</p>
+                                </div>
+                                <div class="rounded-2xl bg-white/80 p-4 border border-rose-100">
+                                    <p class="font-semibold">2. Jika salah, buka bantuan</p>
+                                    <p class="mt-2 text-sm text-slate-600">Bantuan memberi petunjuk langkah, bukan langsung membocorkan jawaban.</p>
+                                </div>
+                                <div class="rounded-2xl bg-white/80 p-4 border border-rose-100">
+                                    <p class="font-semibold">3. Jawab ulang</p>
+                                    <p class="mt-2 text-sm text-slate-600">Setelah membaca bantuan, mahasiswa bisa mencoba lagi pada soal yang sama.</p>
+                                </div>
+                                <div class="rounded-2xl bg-white/80 p-4 border border-rose-100">
+                                    <p class="font-semibold">4. Review pembahasan</p>
+                                    <p class="mt-2 text-sm text-slate-600">Setelah challenge selesai, pembahasan lengkap dapat dibuka dari halaman review.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 grid gap-4 md:grid-cols-2">
+                        <div class="rounded-2xl bg-emerald-50 border border-emerald-200 p-5">
+                            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-emerald-600">Jawaban Benar</p>
+                            <p class="mt-3 text-sm leading-6 text-slate-700">Score dan EXP challenge akan bertambah, lalu mahasiswa bisa lanjut ke soal berikutnya.</p>
+                        </div>
+                        <div class="rounded-2xl bg-amber-50 border border-amber-200 p-5">
+                            <p class="text-sm font-semibold uppercase tracking-[0.2em] text-amber-600">Jawaban Belum Tepat</p>
+                            <p class="mt-3 text-sm leading-6 text-slate-700">Mahasiswa bisa membuka bantuan, memahami petunjuknya, lalu mencoba menjawab ulang.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="tutorial-profile" class="tutorial-panel hidden rounded-[32px] border border-rose-200/40 bg-[#fff8f8] p-7 text-slate-900 shadow-xl">
+                    <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                        <div>
+                            <p class="text-sm font-semibold uppercase tracking-[0.25em] text-amber-500">Modul 3</p>
+                            <h2 class="mt-2 text-3xl font-bold">Memahami Profil dan Progres</h2>
+                            <p class="mt-3 max-w-3xl text-slate-600 leading-7">
+                                Halaman profil membantu mahasiswa membaca perkembangan belajarnya secara lebih nyata, mulai dari
+                                identitas, rank, score, mission aktif, sampai achievement yang sudah terbuka.
+                            </p>
+                        </div>
+                        <a href="{{ route('student.profile.index') }}"
+                            class="inline-flex items-center rounded-2xl border border-slate-300 bg-white px-5 py-3 font-semibold text-slate-700 transition hover:bg-slate-50">
+                            Buka Profil
+                        </a>
+                    </div>
+
+                    <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Rank dan EXP</p>
+                            <p class="mt-2 text-lg font-bold">Progres Level</p>
+                            <p class="mt-2 text-sm text-slate-600">Menunjukkan posisi rank mahasiswa dan seberapa dekat ke rank berikutnya.</p>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Total Score</p>
+                            <p class="mt-2 text-lg font-bold">Hasil Belajar</p>
+                            <p class="mt-2 text-sm text-slate-600">Menggambarkan akumulasi performa terbaik dari mission yang sudah diselesaikan.</p>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Streak</p>
+                            <p class="mt-2 text-lg font-bold">Konsistensi</p>
+                            <p class="mt-2 text-sm text-slate-600">Menunjukkan kebiasaan belajar mahasiswa dari hari ke hari.</p>
+                        </div>
+                        <div class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-400">Achievement</p>
+                            <p class="mt-2 text-lg font-bold">Reward Pembelajaran</p>
+                            <p class="mt-2 text-sm text-slate-600">Badge penghargaan untuk progres, strategi belajar, dan konsistensi.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 rounded-[28px] border border-sky-200 bg-gradient-to-r from-sky-50 to-white p-6">
+                        <p class="text-sm font-semibold uppercase tracking-[0.2em] text-sky-500">Tips Membaca Profil</p>
+                        <ul class="mt-4 space-y-3 text-sm leading-6 text-slate-700">
+                            <li>1. Gunakan total score untuk melihat perkembangan performa terbaik.</li>
+                            <li>2. Gunakan rank dan EXP untuk membaca perkembangan level belajar.</li>
+                            <li>3. Gunakan achievement untuk melihat kebiasaan belajar yang sudah tercapai.</li>
+                            <li>4. Gunakan mission aktif untuk kembali ke progres terakhir dengan lebih cepat.</li>
+                        </ul>
+                    </div>
+                </section>
             </div>
         </div>
+
         <audio id="hover-sound" src="{{ asset('sfx/hover.mp3') }}"></audio>
         <audio id="click-sound" src="{{ asset('sfx/click.mp3') }}"></audio>
     </div>
+
     <style>
         @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: scale(0.95);
+                transform: scale(0.97);
             }
 
             to {
@@ -263,19 +243,30 @@
         }
 
         .animate-fadeIn {
-            animation: fadeIn 0.5s ease-out;
+            animation: fadeIn 0.45s ease-out;
         }
     </style>
-    <!-- JavaScript untuk toggle -->
-    <script>
-        function showSoal() {
-            document.getElementById("soal-section").classList.remove("hidden");
-            document.getElementById("profil-section").classList.add("hidden");
-        }
 
-        function showProfil() {
-            document.getElementById("profil-section").classList.remove("hidden");
-            document.getElementById("soal-section").classList.add("hidden");
+    <script>
+        function showTutorialTab(tabName) {
+            document.querySelectorAll('.tutorial-panel').forEach((panel) => {
+                panel.classList.add('hidden');
+            });
+
+            document.querySelectorAll('.tutorial-tab').forEach((tab) => {
+                tab.classList.remove('border-pink-200', 'bg-gradient-to-r', 'from-white', 'to-rose-50');
+                tab.classList.add('border-slate-200', 'bg-white');
+            });
+
+            document.getElementById(`tutorial-${tabName}`).classList.remove('hidden');
+
+            const activeTab = document.querySelector(`.tutorial-tab[data-tab="${tabName}"]`);
+            if (activeTab) {
+                activeTab.classList.remove('border-slate-200', 'bg-white');
+                activeTab.classList.add('border-pink-200', 'bg-gradient-to-r', 'from-white', 'to-rose-50');
+            }
+
+            playClick();
         }
 
         function playClick() {
@@ -293,21 +284,11 @@
                 audio.play();
             }
         }
-        document.addEventListener("DOMContentLoaded", function() {
-            const hoverElements = document.querySelectorAll(".hover-sfx");
 
-            hoverElements.forEach(el => {
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".tutorial-tab").forEach((el) => {
                 el.addEventListener("mouseenter", playHoverSound);
             });
         });
-
-        function rebindHoverSound() {
-            const hoverElements = document.querySelectorAll(".hover-sfx");
-
-            hoverElements.forEach(el => {
-                el.removeEventListener("mouseenter", playHoverSound);
-                el.addEventListener("mouseenter", playHoverSound);
-            });
-        }
     </script>
 @endsection

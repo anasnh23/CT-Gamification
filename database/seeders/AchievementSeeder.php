@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class AchievementSeeder extends Seeder
 {
@@ -14,31 +13,70 @@ class AchievementSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('achievements')->insert([
+        $now = Carbon::now();
+        $achievements = [
             [
-                'code' => 'first_challenge',
-                'name' => 'First Challenge Completed',
-                'description' => 'You completed your first challenge!',
+                'code' => 'first_mission',
+                'name' => 'Langkah Pertama',
+                'description' => 'Menyelesaikan mission pertama.',
                 'icon' => 'icons/first_challenge.png',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ],
             [
-                'code' => 'five_challenges',
-                'name' => 'Five Times the Charm',
-                'description' => 'Completed 5 challenges!',
+                'code' => 'three_missions',
+                'name' => 'Terus Bertumbuh',
+                'description' => 'Menyelesaikan setidaknya 3 mission.',
                 'icon' => 'icons/five_challenges.png',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
             ],
             [
-                'code' => 'perfect_score',
-                'name' => 'Flawless Victory',
-                'description' => 'Achieved a perfect score on a challenge.',
-                'icon' => 'icons/perfect_score.png',
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
+                'code' => 'first_section',
+                'name' => 'Penjelajah Level',
+                'description' => 'Menuntaskan 1 section pembelajaran.',
+                'icon' => 'icons/five_challenges.png',
             ],
-        ]);
+            [
+                'code' => 'perfect_mission',
+                'name' => 'Jawaban Tepat',
+                'description' => 'Menyelesaikan 1 mission tanpa jawaban salah.',
+                'icon' => 'icons/perfect_score.png',
+            ],
+            [
+                'code' => 'guided_success',
+                'name' => 'Belajar dari Bantuan',
+                'description' => 'Menggunakan bantuan lalu berhasil menjawab dengan benar.',
+                'icon' => 'icons/first_challenge.png',
+            ],
+            [
+                'code' => 'three_day_streak',
+                'name' => 'Konsisten Belajar',
+                'description' => 'Mencapai streak belajar 3 hari.',
+                'icon' => 'icons/five_challenges.png',
+            ],
+            [
+                'code' => 'review_reader',
+                'name' => 'Suka Merefleksi',
+                'description' => 'Membuka halaman review pembahasan setelah challenge selesai.',
+                'icon' => 'icons/perfect_score.png',
+            ],
+            [
+                'code' => 'rank_up',
+                'name' => 'Naik Peringkat',
+                'description' => 'Mencapai rank baru pertama kali.',
+                'icon' => 'icons/perfect_score.png',
+            ],
+        ];
+
+        DB::table('achievements')
+            ->whereIn('code', ['first_challenge', 'five_challenges', 'perfect_score'])
+            ->delete();
+
+        foreach ($achievements as $achievement) {
+            DB::table('achievements')->updateOrInsert(
+                ['code' => $achievement['code']],
+                array_merge($achievement, [
+                    'updated_at' => $now,
+                    'created_at' => $now,
+                ])
+            );
+        }
     }
 }

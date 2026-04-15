@@ -2,10 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 
 class UserSeeder extends Seeder
 {
@@ -14,30 +13,45 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        User::create([
-            'name' => 'Admin',
-            'profile_photo' => 'profile_photos/default.webp',
-            'email' => 'admin@ct.com',
-            'email_verified_at' => now(),
-            'password' => Hash::make('password'),
-        ])->assignRole('admin');
-
-        $lecturers = [
+        $users = [
+            [
+                'name' => 'Admin',
+                'profile_photo' => 'profile_photos/default.webp',
+                'email' => 'admin@ct.com',
+                'email_verified_at' => now(),
+                'password' => Hash::make('password'),
+                'role' => 'admin',
+            ],
             [
                 'name' => 'Lecturer One',
                 'profile_photo' => 'profile_photos/default.webp',
                 'email' => 'lecturer1@ct.com',
+                'email_verified_at' => now(),
                 'password' => Hash::make('password'),
+                'role' => 'lecturer',
             ],
             [
                 'name' => 'Lecturer Two',
                 'profile_photo' => 'profile_photos/default.webp',
                 'email' => 'lecturer2@ct.com',
+                'email_verified_at' => now(),
                 'password' => Hash::make('password'),
+                'role' => 'lecturer',
             ],
         ];
-        foreach ($lecturers as $lecturer) {
-            User::create($lecturer)->assignRole('lecturer');
+
+        foreach ($users as $data) {
+            $role = $data['role'];
+            unset($data['role']);
+
+            $user = User::updateOrCreate(
+                ['email' => $data['email']],
+                $data
+            );
+
+            if (! $user->hasRole($role)) {
+                $user->assignRole($role);
+            }
         }
     }
 }

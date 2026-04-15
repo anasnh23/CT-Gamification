@@ -27,7 +27,10 @@ class RankSeeder extends Seeder
         ];
 
         foreach ($ranks as $rank) {
-            Rank::create($rank);
+            Rank::updateOrCreate(
+                ['name' => $rank['name']],
+                $rank
+            );
         }
     }
 }

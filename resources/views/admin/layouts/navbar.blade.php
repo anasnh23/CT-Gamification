@@ -1,62 +1,22 @@
-<nav class="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-50">
-    <!-- Logo / Title -->
-    <div class="flex items-center space-x-3">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-            class="w-8 h-8 text-blue-600">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a 1 1 0 01-1 1h-3m-4 0h4" />
-        </svg>
-        <h2 class="text-2xl font-bold text-gray-800">Admin Dashboard</h2>
-    </div>
-
-    <!-- User Info & Dropdown -->
-    <div class="relative">
-        <button id="userMenuButton" class="flex items-center space-x-3 focus:outline-none">
-            <!-- Profile Photo -->
-            <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('images/default-avatar.png') }}"
-                alt="User Photo" class="w-10 h-10 object-cover rounded-full border-2 border-gray-300 shadow-sm">
-
-            <span class="text-gray-700 font-medium">Welcome, {{ Auth::user()->name}}</span>
-
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor" class="w-5 h-5 text-gray-600">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-            </svg>
-        </button>
-
-        <!-- Dropdown Menu -->
-        <div id="userDropdown"
-            class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 overflow-hidden z-10">
-            <!-- Profile Info -->
-            <div class="px-4 py-3 border-b border-gray-200">
-                <p class="text-sm text-gray-600">Signed in as</p>
-                <p class="font-semibold text-gray-900">{{ Auth::user()->email }}</p>
+<header style="padding:28px 32px 0;">
+    <div class="admin-surface" style="border-radius:34px; padding:22px 28px; display:flex; align-items:center; justify-content:space-between; gap:20px;">
+        <div style="display:flex; align-items:center; gap:18px;">
+            <div style="width:72px; height:72px; border-radius:26px; border:1px solid rgba(255,228,236,.16); background:rgba(255,255,255,.06); display:grid; place-items:center;">
+                <img src="{{ asset('storage/icons/game.png') }}" alt="CTG" style="width:40px; height:40px; object-fit:contain;">
             </div>
+            <div>
+                <div style="font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:rgba(255,236,242,.72);">Admin Workspace</div>
+                <div style="font-size:46px; line-height:1; font-weight:800; color:#fff;">{{ request()->routeIs('admin.students.*') ? 'Students' : 'Users' }}</div>
+            </div>
+        </div>
 
-            <!-- Logout Button -->
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit"
-                    class="w-full text-left px-4 py-2 text-red-600 hover:bg-red-50 transition duration-150">
-                    Logout
-                </button>
-            </form>
+        <div style="display:flex; align-items:center; gap:14px; padding:16px 20px; border-radius:28px; border:1px solid rgba(255,228,236,.14); background:rgba(255,255,255,.06);">
+            <img src="{{ Auth::user()->profile_photo ? asset('storage/' . Auth::user()->profile_photo) : asset('images/default-avatar.png') }}"
+                alt="Admin Photo" style="width:58px; height:58px; border-radius:999px; object-fit:cover; background:#fff;">
+            <div>
+                <div style="font-size:12px; letter-spacing:.28em; text-transform:uppercase; color:rgba(255,236,242,.72);">Administrator</div>
+                <div style="font-size:18px; font-weight:700; color:#fff;">{{ Auth::user()->name }}</div>
+            </div>
         </div>
     </div>
-</nav>
-
-<script>
-    const userMenuButton = document.getElementById('userMenuButton');
-    const userDropdown = document.getElementById('userDropdown');
-
-    userMenuButton.addEventListener('click', (event) => {
-        event.stopPropagation();
-        userDropdown.classList.toggle('hidden');
-    });
-
-    document.addEventListener('click', function(event) {
-        if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
-            userDropdown.classList.add('hidden');
-        }
-    });
-</script>
+</header>

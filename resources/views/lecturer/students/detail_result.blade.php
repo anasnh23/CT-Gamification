@@ -1,70 +1,78 @@
 @extends('lecturer.layouts.app')
 
 @section('content')
-    <div class="max-w-7xl mx-auto px-4 py-6">
-        <h1 class="text-4xl font-extrabold text-gray-800 mb-8 border-b pb-2 tracking-tight">
-            Answer Details - {{ $student->user->name }}
-            <span class="text-sm font-medium text-gray-500">Challenge ID: {{ $challenge->id }} | Attempt:
-                {{ $attempt }}</span>
-        </h1>
-
-        <!-- Attempt Overview (Minimized) -->
-        <div class="flex justify-end mb-6">
-            <div class="w-full md:w-1/3 bg-white border border-gray-200 shadow-sm rounded-lg p-4">
-                <h2 class="text-base font-semibold text-blue-600 mb-3">Attempt Overview</h2>
-                <ul class="space-y-1 text-sm text-gray-700 leading-relaxed">
-                    <li><strong>Attempt:</strong> {{ $result->attempt_number }}</li>
-                    <li><strong>Score:</strong> {{ $result->total_score }}</li>
-                    <li><strong>EXP:</strong> {{ $result->total_exp }}</li>
-                </ul>
+    <div class="student-result-page">
+        <section class="student-result-hero">
+            <div>
+                <p class="student-result-kicker">Detail Attempt</p>
+                <h1 class="student-result-title">{{ $student->user->name }} - Attempt {{ $attempt }}</h1>
+                <p class="student-result-copy">Tinjau jawaban mahasiswa per soal untuk melihat pola kesalahan dan pemahaman konsep pada challenge ini.</p>
             </div>
-        </div>
+            <a href="{{ route('lecturer.students.show', $student->id) }}" class="student-result-back">Kembali ke profil mahasiswa</a>
+        </section>
 
-        <!-- Student Answers Highlight -->
-        <div class="bg-gradient-to-br from-blue-50 to-white border border-blue-200 shadow-xl rounded-xl p-6">
-            <h2 class="text-2xl font-bold text-blue-700 mb-6">📘 Student Answers</h2>
+        <section class="student-result-summary bg-white">
+            <div class="student-result-summary-box">
+                <span>Challenge</span>
+                <strong>{{ $challenge->title }}</strong>
+            </div>
+            <div class="student-result-summary-box">
+                <span>Score</span>
+                <strong>{{ $result->total_score }}</strong>
+            </div>
+            <div class="student-result-summary-box">
+                <span>EXP</span>
+                <strong>{{ $result->total_exp }}</strong>
+            </div>
+            <div class="student-result-summary-box">
+                <span>Attempt</span>
+                <strong>#{{ $result->attempt_number }}</strong>
+            </div>
+        </section>
+
+        <section class="student-result-card bg-white">
+            <div class="student-result-card-head">
+                <div>
+                    <p class="student-result-card-kicker">Jawaban Mahasiswa</p>
+                    <h2 class="student-result-card-title">Ringkasan jawaban per soal</h2>
+                </div>
+            </div>
+
             <div class="overflow-x-auto">
-                <table class="min-w-full text-sm text-left font-medium text-gray-800 divide-y divide-blue-200">
-                    <thead class="bg-blue-600 text-white uppercase text-xs font-semibold tracking-wider">
+                <table class="student-result-table">
+                    <thead>
                         <tr>
-                            <th class="px-6 py-3">Question</th>
-                            <th class="px-6 py-3">Answer</th>
-                            <th class="px-6 py-3">Detail</th>
-                            <th class="px-6 py-3">Result</th>
-                            <th class="px-6 py-3">Action</th>
+                            <th>Pertanyaan</th>
+                            <th>Input Mahasiswa</th>
+                            <th>Detail Jawaban</th>
+                            <th>Hasil</th>
+                            <th class="text-center">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-100">
+                    <tbody>
                         @forelse ($answers as $questionId => $groupedAnswers)
-                            <tr class="hover:bg-blue-50 transition duration-150">
-                                <td class="px-6 py-4 max-w-xl whitespace-normal leading-snug">
-                                    {{ Str::limit($groupedAnswers->first()->question->question_text ?? 'Question not found', 120) }}
-                                </td>
-                                <td class="px-6 py-4 font-medium">
-                                    {{ $groupedAnswers->pluck('selected_answer')->join(', ') }}
-                                </td>
-                                <td class="px-6 py-4 font-medium">
-                                    {{ $groupedAnswers->pluck('selectedAnswer.answer')->filter()->join(', ') }}
-                                </td>
-                                <td class="px-6 py-4 font-bold">
+                            <tr>
+                                <td>{{ Str::limit($groupedAnswers->first()->question->question_text ?? 'Question not found', 120) }}</td>
+                                <td>{{ $groupedAnswers->pluck('selected_answer')->join(', ') }}</td>
+                                <td>{{ $groupedAnswers->pluck('selectedAnswer.answer')->filter()->join(', ') }}</td>
+                                <td>
                                     @php
                                         $isAllCorrect = $groupedAnswers->every(fn($ans) => $ans->is_correct);
                                         $isAnyCorrect = $groupedAnswers->contains(fn($ans) => $ans->is_correct);
                                     @endphp
 
                                     @if ($isAllCorrect)
-                                        <span class="text-green-600">✔ All Correct</span>
+                                        <span class="student-result-pill success">Semua benar</span>
                                     @elseif ($isAnyCorrect)
-                                        <span class="text-yellow-600">✔ Partially Correct</span>
+                                        <span class="student-result-pill warn">Sebagian benar</span>
                                     @else
-                                        <span class="text-red-500">✘ Incorrect</span>
+                                        <span class="student-result-pill danger">Salah</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4">
+                                <td>
                                     @if ($groupedAnswers->first()->question)
-                                        <a href="{{ route('lecturer.questions.show', $groupedAnswers->first()->question->id) }}"
-                                            class="inline-block bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold py-1.5 px-4 rounded-full shadow transition duration-200">
-                                            View Question
+                                        <a href="{{ route('lecturer.questions.show', $groupedAnswers->first()->question->id) }}" class="student-result-btn">
+                                            Lihat Soal
                                         </a>
                                     @else
                                         <span class="text-gray-400">N/A</span>
@@ -73,22 +81,47 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="4" class="text-center text-gray-500 py-6 italic">
-                                    No answers available for this attempt.
+                                <td colspan="5">
+                                    <div class="students-empty">Belum ada jawaban untuk attempt ini.</div>
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
-        </div>
-
-        <!-- Back Button -->
-        <div class="mt-10 text-right">
-            <a href="{{ route('lecturer.students.show', $student->id) }}"
-                class="inline-block bg-gray-700 hover:bg-gray-800 text-white font-semibold text-sm py-2 px-6 rounded shadow transition duration-200">
-                ← Back to Student Overview
-            </a>
-        </div>
+        </section>
     </div>
+
+    <style>
+        .student-result-page { max-width: 1200px; margin: 0 auto; }
+        .student-result-hero { display:flex; justify-content:space-between; align-items:flex-end; gap:20px; margin-bottom:24px; padding:28px; border-radius:30px; border:1px solid rgba(255,228,236,.14); background: rgba(74,19,39,.78); box-shadow: 0 20px 50px rgba(0,0,0,.22); }
+        .student-result-kicker { margin:0; font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:rgba(255,228,236,.75); }
+        .student-result-title { margin:12px 0 0; color:#fff; font-size:40px; font-weight:700; }
+        .student-result-copy { margin:14px 0 0; max-width:760px; color:rgba(255,240,244,.76); line-height:1.8; }
+        .student-result-back { display:inline-flex; align-items:center; justify-content:center; padding:14px 20px; border-radius:18px; background:rgba(255,255,255,.1); color:#fff; font-weight:700; text-decoration:none; }
+        .student-result-summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; padding:24px; border-radius:30px; margin-bottom:24px; }
+        .student-result-summary-box { padding:18px; border-radius:20px; background:#fff7fa; }
+        .student-result-summary-box span { display:block; color:#94a3b8; font-size:12px; text-transform:uppercase; letter-spacing:.12em; margin-bottom:10px; }
+        .student-result-summary-box strong { color:#1f2937; font-size:24px; }
+        .student-result-card { padding:24px; border-radius:30px; }
+        .student-result-card-head { margin-bottom:18px; }
+        .student-result-card-kicker { margin:0; font-size:12px; text-transform:uppercase; letter-spacing:.3em; color:#be185d; }
+        .student-result-card-title { margin:8px 0 0; color:#1f2937; font-size:30px; font-weight:700; }
+        .student-result-table { width:100%; border-collapse:collapse; }
+        .student-result-table thead th { padding:14px 16px; text-align:left; background:linear-gradient(90deg,#9f1d4f,#d9467a); color:#fff; font-size:12px; letter-spacing:.18em; text-transform:uppercase; }
+        .student-result-table thead th:first-child { border-top-left-radius:18px; }
+        .student-result-table thead th:last-child { border-top-right-radius:18px; }
+        .student-result-table tbody td { padding:18px 16px; border-bottom:1px solid #f3e8ef; color:#334155; vertical-align:middle; }
+        .student-result-table tbody tr:hover { background:#fff7fa; }
+        .student-result-pill { display:inline-flex; align-items:center; padding:8px 12px; border-radius:999px; font-weight:700; font-size:12px; }
+        .student-result-pill.success { background:#dcfce7; color:#166534; }
+        .student-result-pill.warn { background:#fff7ed; color:#c2410c; }
+        .student-result-pill.danger { background:#fee2e2; color:#991b1b; }
+        .student-result-btn { display:inline-flex; align-items:center; justify-content:center; padding:10px 14px; border-radius:14px; background:#0ea5e9; color:#fff; font-weight:700; text-decoration:none; }
+        @media (max-width:768px) {
+            .student-result-hero { flex-direction:column; align-items:stretch; }
+            .student-result-title { font-size:32px; }
+            .student-result-summary { grid-template-columns:1fr; }
+        }
+    </style>
 @endsection

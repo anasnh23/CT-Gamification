@@ -9,7 +9,25 @@ class StudentAnswer extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'question_id', 'challenge_id', 'attempt_number', 'selected_answer', 'is_correct'];
+    protected $primaryKey = 'result_id';
+
+    protected $fillable = [
+        'user_id',
+        'question_id',
+        'challenge_id',
+        'attempt_number',
+        'answer_id',
+        'selected_answer',
+        'answer_text',
+        'is_correct',
+        'used_help',
+        'help_requested_at',
+    ];
+
+    protected $casts = [
+        'used_help' => 'boolean',
+        'help_requested_at' => 'datetime',
+    ];
 
     public function user()
     {
@@ -21,6 +39,6 @@ class StudentAnswer extends Model
     }
     public function selectedAnswer()
     {
-        return $this->belongsTo(Answer::class, 'selected_answer');
+        return $this->belongsTo(Answer::class, 'answer_id');
     }
 }

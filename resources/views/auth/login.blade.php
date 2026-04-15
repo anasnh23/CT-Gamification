@@ -1,55 +1,64 @@
 <x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
-
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
+    <div style="display:flex; flex-direction:column; gap:18px;">
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <p style="margin:0; font-size:12px; letter-spacing:.32em; text-transform:uppercase; color:#be185d;">Login</p>
+            <h2 style="margin:10px 0 0; font-size:38px; line-height:1.05; color:#1f2937; font-weight:800;">Masuk ke akun Anda</h2>
+            <p style="margin:12px 0 0; color:#64748b; line-height:1.8;">Gunakan email dan password untuk melanjutkan ke workspace Anda.</p>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+        <x-auth-session-status class="mb-2" :status="session('status')" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+        <form method="POST" action="{{ route('login') }}" style="display:flex; flex-direction:column; gap:18px;">
+            @csrf
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-between mt-4">
             <div>
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('register') }}">
-                    {{ __('Create an account') }}
-                </a>
+                <x-input-label for="email" :value="__('Email')" style="color:#334155;font-weight:700;" />
+                <x-text-input id="email" class="block mt-2 w-full"
+                    style="border-radius:16px;border:1px solid #f0b6c9;padding:14px 16px;color:#1f2937;background:#fff;"
+                    type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+                <x-input-error :messages="$errors->get('email')" class="mt-2" />
             </div>
 
-            <div class="flex items-center">
-                {{-- @if (Route::has('password.request'))
-                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 me-3" href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
-                    </a>
-                @endif --}}
+            <div>
+                <x-input-label for="password" :value="__('Password')" style="color:#334155;font-weight:700;" />
+                <div style="position:relative; margin-top:8px;">
+                    <x-text-input id="password" class="block w-full"
+                        style="border-radius:16px;border:1px solid #f0b6c9;padding:14px 52px 14px 16px;color:#1f2937;background:#fff;"
+                        type="password" name="password" required autocomplete="current-password" />
+                    <button type="button" id="togglePassword"
+                        style="position:absolute; top:50%; right:14px; transform:translateY(-50%); border:0; background:transparent; color:#9f1d4f; font-size:13px; font-weight:700; cursor:pointer;">
+                        Lihat
+                    </button>
+                </div>
+                <x-input-error :messages="$errors->get('password')" class="mt-2" />
+            </div>
 
-                <x-primary-button class="ms-3">
+            <label for="remember_me" style="display:inline-flex; align-items:center; gap:10px; color:#64748b; font-size:14px;">
+                <input id="remember_me" type="checkbox" name="remember" style="width:18px;height:18px;border-radius:6px;border:1px solid #d8b4c7;">
+                Ingat saya
+            </label>
+
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; padding-top:6px;">
+                <a href="{{ route('register') }}" style="font-size:14px; font-weight:600; text-decoration:none;">
+                    Buat akun
+                </a>
+
+                <x-primary-button
+                    style="border-radius:16px;padding:14px 22px;background:linear-gradient(90deg,#c0265f,#ec4899);border:0;box-shadow:0 16px 30px rgba(190,24,93,.22);">
                     {{ __('Log in') }}
                 </x-primary-button>
             </div>
-        </div>
-    </form>
+        </form>
+    </div>
+
+    <script>
+        const passwordInput = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+
+        togglePassword?.addEventListener('click', function() {
+            const isHidden = passwordInput.type === 'password';
+            passwordInput.type = isHidden ? 'text' : 'password';
+            togglePassword.textContent = isHidden ? 'Sembunyi' : 'Lihat';
+        });
+    </script>
 </x-guest-layout>
