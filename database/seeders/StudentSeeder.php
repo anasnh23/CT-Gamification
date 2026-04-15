@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\File;
 use League\Csv\Reader;
 
 class StudentSeeder extends Seeder
@@ -17,6 +18,12 @@ class StudentSeeder extends Seeder
     public function run(): void
     {
         $csvPath = base_path('storage/app/seeds/students.csv');
+
+        if (! File::exists($csvPath)) {
+            $this->command?->warn("StudentSeeder dilewati: file students.csv tidak ditemukan di {$csvPath}");
+            return;
+        }
+
         $csv = Reader::createFromPath($csvPath, 'r');
         $csv->setHeaderOffset(0);
 
