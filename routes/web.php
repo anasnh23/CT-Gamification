@@ -96,7 +96,7 @@ Route::middleware(['auth', 'role:student'])->prefix('student')->group(function (
     // Profile
     Route::resource('profile', StudentProfileController::class)->names([
         'index' => 'student.profile.index',
-    ])->except(['show']);
+    ])->only(['index']);
     Route::get('/profile/edit', [StudentProfileController::class, 'edit'])->name('student.profile.edit');
     Route::put('/profile/update', [StudentProfileController::class, 'update'])->name('student.profile.update');
 
