@@ -2,8 +2,8 @@
     <div style="display:flex; flex-direction:column; gap:18px;">
         <div>
             <p style="margin:0; font-size:12px; letter-spacing:.32em; text-transform:uppercase; color:#be185d;">Login</p>
-            <h2 style="margin:10px 0 0; font-size:38px; line-height:1.05; color:#1f2937; font-weight:800;">Masuk ke akun Anda</h2>
-            <p style="margin:12px 0 0; color:#64748b; line-height:1.8;">Gunakan email dan password untuk melanjutkan ke workspace Anda.</p>
+            <h2 style="margin:10px 0 0; font-size:38px; line-height:1.05; color:#1f2937; font-weight:800;">Masuk ke sistem</h2>
+            <p style="margin:12px 0 0; color:#64748b; line-height:1.8;">Masukkan email dan password yang sudah terdaftar.</p>
         </div>
 
         <x-auth-session-status class="mb-2" :status="session('status')" />

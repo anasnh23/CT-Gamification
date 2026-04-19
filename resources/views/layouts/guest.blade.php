@@ -208,15 +208,15 @@
                             CTG Platform
                         </div>
 
-                        <h1 class="guest-brand-title">Belajar<br>lebih hidup.</h1>
+                        <h1 class="guest-brand-title">Platform<br>pembelajaran.</h1>
                         <p class="guest-brand-copy">
-                            Masuk ke workspace untuk mengelola tantangan, memantau progres, dan menjalankan pembelajaran dengan nuansa gamifikasi yang konsisten.
+                            Sistem ini digunakan untuk mengerjakan tantangan, melihat progres, dan mengikuti pembelajaran berbasis gamifikasi.
                         </p>
 
                         <div class="guest-brand-points">
-                            <div class="guest-brand-point"><span>01</span> Progress yang jelas</div>
+                            <div class="guest-brand-point"><span>01</span> Progres belajar</div>
                             <div class="guest-brand-point"><span>02</span> Bantuan dan pembahasan</div>
-                            <div class="guest-brand-point"><span>03</span> Dashboard terhubung</div>
+                            <div class="guest-brand-point"><span>03</span> Akses sesuai peran</div>
                         </div>
                     </div>
 
